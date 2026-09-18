@@ -570,7 +570,7 @@
       engine_sample: "via Claude in this page", engine_native: "via your API key",
       engine_cloud: "via your account", engine_none: "not set up",
       noimg_t: "This view will not pass a photo to Claude",
-      noimg_d: "This viewer says it will not pass a photo to Claude. Press the camera anyway — it may still work. If it does not: open this same link in the Claude app, which costs nothing beyond your subscription, or paste an API key here.",
+      noimg_d: "This viewer says it will not pass a photo to Claude, so a scan may fail — it is worth trying, the claim is sometimes wrong. If it does fail: open this same link in the Claude app, which costs nothing beyond your subscription, or paste an API key here.",
       noimg_confirmed: "This viewer really will not send the photo. Open the link in the Claude app, or paste an API key.",
       blocked_t: "Scanning needs Claude", 
       blocked_d: "In this app, add your own Anthropic API key below and scanning works. Opened as a published artifact instead, it runs on your Claude account with no key at all.",
@@ -677,7 +677,7 @@
       engine_sample: "דרך קלוד בדף הזה", engine_native: "דרך מפתח ה-API שלך",
       engine_cloud: "דרך החשבון שלך", engine_none: "לא מוגדר",
       noimg_t: "התצוגה הזו לא מעבירה תמונה לקלוד",
-      noimg_d: "התצוגה הזו מדווחת שהיא לא מעבירה תמונה לקלוד. לחץ על צלם בכל זאת — יכול להיות שזה יעבוד. אם לא: פתח את אותו קישור באפליקציית קלוד, שלא עולה מעבר למנוי שלך, או הדבק כאן מפתח API.",
+      noimg_d: "התצוגה הזו מדווחת שהיא לא מעבירה תמונה לקלוד, אז הסריקה עלולה להיכשל — שווה לנסות בכל זאת, הדיווח לפעמים שגוי. אם זה נכשל: פתח את אותו קישור באפליקציית קלוד, שלא עולה מעבר למנוי שלך, או הדבק כאן מפתח API.",
       noimg_confirmed: "התצוגה הזו באמת לא שולחת את התמונה. פתח את הקישור באפליקציית קלוד, או הדבק מפתח API.",
       blocked_t: "לסריקה נדרש קלוד",
       blocked_d: "באפליקציה הזו — הוסף מפתח Anthropic API למטה והסריקה תעבוד. בארטיפקט המפורסם היא רצה על חשבון הקלוד שלך בלי מפתח בכלל.",
@@ -954,11 +954,24 @@
     },
 
     /** Read one or more photos of the SAME receipt and return parsed JSON. */
+    imagesUnavailable(e) {
+      return !!e && (e.code === "images_unavailable" ||
+        /image input is not available|images? (?:are|is) not (?:available|supported)/i.test(String(e.message || "")));
+    },
+
     async readImages(prompt, blobs, opts) {
       const o = opts || {};
-      if (this.imageMode() === "sample") {
-        return this.sample.json(prompt, { images: blobs, modelTier: "complex", signal: o.signal });
+      // Try the artifact runtime whenever it exists, whatever its limits claim:
+      // the claim can be wrong, and the call is the only real test.
+      if (this.sample) {
+        try {
+          return await this.sample.json(prompt, { images: blobs, modelTier: "complex", signal: o.signal });
+        } catch (e) {
+          // Only a genuine "this view cannot carry images" falls through to a key.
+          if (!this.hasKey() || !this.imagesUnavailable(e)) throw e;
+        }
       }
+      if (!this.hasKey()) throw { code: "images_unavailable", message: "image input is not available in this view" };
       const parts = [];
       for (const blob of blobs) {
         parts.push({
@@ -1744,11 +1757,12 @@
   }
 
   async function runScanInner() {
-    if (!Cloud.signedIn() && AI.imageMode() === "none") {
-      // Nothing to send it to — but the attempt was allowed, so answer it.
+    // Only refuse when there is genuinely nothing to send to. A runtime that
+    // reports no image support is still tried: the report can be wrong, and the
+    // call itself is the only real test.
+    if (!Cloud.signedIn() && !AI.sample && !AI.hasKey()) {
       status($("scan-status"), "", false);
-      $("scan-result").innerHTML = '<div class="notice notice-warn">' +
-        esc(t(!!AI.sample && !AI.imageLimits ? "noimg_d" : "blocked_d")) + "</div>";
+      $("scan-result").innerHTML = '<div class="notice notice-warn">' + esc(t("blocked_d")) + "</div>";
       return;
     }
     const statusEl = $("scan-status");
@@ -1791,7 +1805,7 @@
         return;
       }
       status(statusEl, "", false);
-      const imageless = e && (e.code === "images_unavailable" || /image input is not available/i.test(String(e.message || "")));
+      const imageless = AI.imagesUnavailable(e);
       $("scan-result").innerHTML = '<div class="notice notice-bad">' +
         esc(imageless ? t("noimg_confirmed") : t("scan_failed", { m: (e && (e.message || e.code)) || "error" })) + "</div>";
       $("scan-actions").innerHTML = "";
