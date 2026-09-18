@@ -186,6 +186,13 @@
   .drop h3 { font-size:17px; margin-bottom:5px; }
   .drop p { color:var(--muted); font-size:13px; margin:0 0 16px; }
   .drop .row { display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
+  .shots-row { display:flex; gap:8px; overflow-x:auto; padding-block:2px 6px; }
+  .shot { position:relative; flex:none; }
+  .shot img { width:74px; height:100px; object-fit:cover; border-radius:9px; border:1px solid var(--hairline); display:block; }
+  .shot .n { position:absolute; inset-inline-start:4px; top:4px; background:var(--accent); color:var(--accent-ink);
+             font-size:10px; font-weight:700; border-radius:99px; padding:1px 7px; }
+  .shot .x { position:absolute; inset-inline-end:3px; top:3px; border:0; padding:0; width:19px; height:19px;
+             border-radius:99px; background:rgba(0,0,0,.62); color:#fff; font-size:12px; line-height:19px; }
   .preview { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; }
   .preview img { max-height:300px; max-width:100%; border-radius:var(--r); border:1px solid var(--hairline); }
   .preview .pane { flex:1; min-width:250px; }
@@ -361,6 +368,16 @@
           </div>
         </div>
 
+        <div id="shots" hidden style="margin-top:16px">
+          <div class="shots-row" id="shots-row"></div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-primary" id="do-scan"></button>
+            <button type="button" class="btn" id="add-shot"></button>
+            <button type="button" class="btn" id="clear-shots"></button>
+          </div>
+          <p class="sec" id="shots-hint" style="margin-top:10px"></p>
+        </div>
+
         <div id="scan-stage" hidden style="margin-top:16px">
           <div class="preview">
             <img id="scan-img" alt="">
@@ -530,11 +547,15 @@
       idx_vs: "index {v} · {d}% vs {m}", idx_covered: "{c} of {t} tracked products repriced",
       receipts_lines: "{v} · {r} receipts · {l} lines",
       h_scan: "Scan a bill", s_scan: "Photograph the receipt and Claude reads it into your data.",
-      drop_title: "Take a photo of the receipt", drop_sub: "Or drop an image here. A straight-on shot of the whole receipt reads best.",
+      drop_title: "Take a photo of the receipt", drop_sub: "Fill the frame with the receipt. A long one can be photographed in two or three overlapping parts — add them one by one, then read them together.",
       take: "Take photo", pick: "Choose a file",
       scanning: "Reading the receipt…", preparing: "Preparing the photo…",
       scanning_parts: "Reading the receipt in {n} parts…",
       scan_stop: "Stop", scan_again: "Scan another",
+      shots_scan_one: "Read the photo", shots_scan: "Read {n} photos",
+      shots_add: "Add another photo", shots_clear: "Start over",
+      shots_hint_one: "One photo. If the receipt is long, add a photo of the next part before reading — or let it be split automatically.",
+      shots_hint_many: "Read in the order shown, top of the receipt first. Overlapping the parts a little is good; a gap between them loses lines.",
       scan_save: "Save", scan_download: "Download JSON",
       scan_saved: "Saved — it is on your dashboard now.", scan_saving: "Saving…",
       scan_failed: "Could not read this photo: {m}",
@@ -543,6 +564,8 @@
       scan_dup: "A receipt with this number is already saved. Saving overwrites it.",
       engine_sample: "via Claude in this page", engine_native: "via your API key",
       engine_cloud: "via your account", engine_none: "not set up",
+      noimg_t: "This view cannot send photos",
+      noimg_d: "Claude is reachable here, but this viewer will not pass an image to it. Open the artifact in the Claude app, install the Android app, or add your own API key below — any of the three makes scanning work.",
       blocked_t: "Scanning needs Claude", 
       blocked_d: "In this app, add your own Anthropic API key below and scanning works. Opened as a published artifact instead, it runs on your Claude account with no key at all.",
       settings_title: "Settings — Anthropic API key",
@@ -630,11 +653,15 @@
       idx_vs: "מדד {v} · {d}% מול {m}", idx_covered: "{c} מתוך {t} מוצרים קיבלו מחיר חדש",
       receipts_lines: "{v} · {r} חשבוניות · {l} שורות",
       h_scan: "סריקת חשבונית", s_scan: "צלם את החשבונית וקלוד יקרא אותה לתוך הנתונים.",
-      drop_title: "צלם את החשבונית", drop_sub: "או גרור לכאן תמונה. צילום ישר של כל החשבונית נקרא הכי טוב.",
+      drop_title: "צלם את החשבונית", drop_sub: "מלא את הפריים בחשבונית. חשבונית ארוכה אפשר לצלם בשניים-שלושה חלקים חופפים — מוסיפים אותם אחד-אחד וקוראים יחד.",
       take: "צלם", pick: "בחר קובץ",
       scanning: "קורא את החשבונית…", preparing: "מכין את התמונה…",
       scanning_parts: "קורא את החשבונית ב-{n} חלקים…",
       scan_stop: "עצור", scan_again: "סרוק עוד אחת",
+      shots_scan_one: "קרא את התמונה", shots_scan: "קרא {n} תמונות",
+      shots_add: "הוסף תמונה", shots_clear: "התחל מחדש",
+      shots_hint_one: "תמונה אחת. אם החשבונית ארוכה, הוסף צילום של החלק הבא לפני הקריאה — או תן לה להתפצל אוטומטית.",
+      shots_hint_many: "נקראות לפי הסדר שמוצג, מראש החשבונית. חפיפה קטנה בין החלקים זה טוב; רווח ביניהם מאבד שורות.",
       scan_save: "שמור", scan_download: "הורד JSON",
       scan_saved: "נשמר — זה כבר בלוח.", scan_saving: "שומר…",
       scan_failed: "לא הצלחתי לקרוא את התמונה: {m}",
@@ -643,6 +670,8 @@
       scan_dup: "כבר שמורה חשבונית עם המספר הזה. שמירה תדרוס אותה.",
       engine_sample: "דרך קלוד בדף הזה", engine_native: "דרך מפתח ה-API שלך",
       engine_cloud: "דרך החשבון שלך", engine_none: "לא מוגדר",
+      noimg_t: "התצוגה הזו לא יכולה לשלוח תמונות",
+      noimg_d: "קלוד זמין כאן, אבל התצוגה הזו לא מעבירה אליו תמונה. פתח את הארטיפקט באפליקציית קלוד, התקן את אפליקציית האנדרואיד, או הוסף מפתח API משלך למטה — כל אחד מהשלושה יפעיל את הסריקה.",
       blocked_t: "לסריקה נדרש קלוד",
       blocked_d: "באפליקציה הזו — הוסף מפתח Anthropic API למטה והסריקה תעבוד. בארטיפקט המפורסם היא רצה על חשבון הקלוד שלך בלי מפתח בכלל.",
       settings_title: "הגדרות — מפתח Anthropic API",
@@ -844,6 +873,14 @@
       this.mode = this.sample ? "sample" : (this.hasKey() ? "key" : "none");
       return this.mode;
     },
+    /* A viewer can be able to ask Claude but not to send it a photo — the
+       artifact runtime reports that separately, and a mobile browser view is
+       exactly the case. Gate the two screens on the right one. */
+    imageMode() {
+      if (this.sample && this.imageLimits) return "sample";
+      return this.hasKey() ? "key" : "none";
+    },
+    textMode() { return this.sample ? "sample" : (this.hasKey() ? "key" : "none"); },
 
     _post(body) {
       const key = this.key();
@@ -905,14 +942,14 @@
 
     /** How many photos one request may carry. */
     maxImages() {
-      if (this.mode === "sample") return (this.imageLimits && this.imageLimits.maxCount) || 4;
+      if (this.imageMode() === "sample") return (this.imageLimits && this.imageLimits.maxCount) || 4;
       return 8;
     },
 
     /** Read one or more photos of the SAME receipt and return parsed JSON. */
     async readImages(prompt, blobs, opts) {
       const o = opts || {};
-      if (this.mode === "sample") {
+      if (this.imageMode() === "sample") {
         return this.sample.json(prompt, { images: blobs, modelTier: "complex", signal: o.signal });
       }
       const parts = [];
@@ -934,7 +971,7 @@
     /** Ask a text question. Streams where the runtime can; otherwise resolves once. */
     async askText(turns, opts) {
       const o = opts || {};
-      if (this.mode === "sample") {
+      if (this.textMode() === "sample") {
         const res = await this.sample(turns, { cache: false, signal: o.signal, onText: o.onText });
         return res.text;
       }
@@ -1631,16 +1668,34 @@
   function status(el, text, busy) {
     el.innerHTML = (busy ? '<span class="spinner"></span>' : "") + (text ? "<span>" + esc(text) + "</span>" : "");
   }
+  /* Photos accumulate. A long receipt takes two or three shots, and each one
+     must join the others rather than replace them. Nothing is sent to Claude
+     until the person says they are done. */
   function pickFile(files) {
     const list = [].concat(files || []).filter((f) => f && /^image\//.test(f.type || ""));
     if (!list.length) return;
-    scanFile = list[0]; scanFiles = list; scanReceipt = null;
-    $("scan-stage").hidden = false;
-    $("scan-img").src = URL.createObjectURL(list[0]);
-    $("scan-result").innerHTML = "";
-    $("scan-actions").innerHTML = "";
-    $("scan-stage").scrollIntoView({ block: "nearest", behavior: "smooth" });
-    runScan();
+    const room = Math.max(0, (Cloud.signedIn() ? 8 : AI.maxImages()) - scanFiles.length);
+    scanFiles = scanFiles.concat(list.slice(0, room));
+    scanFile = scanFiles[0];
+    scanReceipt = null;
+    $("scan-stage").hidden = true;
+    renderShots();
+  }
+  function renderShots() {
+    const box = $("shots"), row = $("shots-row");
+    box.hidden = !scanFiles.length;
+    if (!scanFiles.length) { row.innerHTML = ""; return; }
+    row.innerHTML = scanFiles.map((f, i) =>
+      '<div class="shot"><img alt="" src="' + URL.createObjectURL(f) + '">' +
+      '<span class="n">' + (i + 1) + '</span>' +
+      '<button type="button" class="x" data-drop="' + i + '" aria-label="remove">×</button></div>').join("");
+    row.querySelectorAll("[data-drop]").forEach((b) => {
+      b.onclick = () => { scanFiles.splice(Number(b.dataset.drop), 1); scanFile = scanFiles[0] || null; renderShots(); };
+    });
+    $("do-scan").textContent = scanFiles.length === 1 ? t("shots_scan_one") : t("shots_scan", { n: scanFiles.length });
+    $("add-shot").textContent = t("shots_add");
+    $("clear-shots").textContent = t("shots_clear");
+    $("shots-hint").textContent = scanFiles.length > 1 ? t("shots_hint_many") : t("shots_hint_one");
   }
 
   /** One long photo becomes strips; several photos are already the strips. */
@@ -1650,6 +1705,11 @@
     return sliceTall(scanFiles[0], cap);
   }
   async function runScan() {
+    if (!scanFiles.length) return;
+    $("scan-stage").hidden = false;
+    $("scan-img").src = URL.createObjectURL(scanFiles[0]);
+    $("scan-result").innerHTML = "";
+    $("scan-stage").scrollIntoView({ block: "nearest", behavior: "smooth" });
     const statusEl = $("scan-status");
     status(statusEl, t("preparing"), true);
     let parts;
@@ -1746,6 +1806,7 @@
     scanFile = null; scanFiles = []; scanReceipt = null;
     $("scan-stage").hidden = true;
     $("file").value = ""; $("file-camera").value = "";
+    renderShots();
   }
   async function saveScan() {
     const r = scanReceipt, btn = $("do-save");
@@ -1905,6 +1966,7 @@
     fillSuggestions();
     paintAccount();
     paintEngine();
+    renderShots();
   }
   function option(v, label, sel) { return '<option value="' + esc(v) + '"' + (sel ? " selected" : "") + ">" + esc(label) + "</option>"; }
   function fillControls() {
@@ -1930,21 +1992,34 @@
     $("ask-suggest").querySelectorAll("[data-q]").forEach((b) => { b.onclick = () => ask(b.dataset.q); });
   }
   /** Show which route to Claude is live, and unlock or explain the two screens. */
+  const ENGINE_LABEL = { cloud: "engine_cloud", sample: "engine_sample", key: "engine_native", none: "engine_none" };
   function paintEngine() {
-    const mode = Cloud.signedIn() ? "cloud" : AI.refresh();
-    const label = mode === "cloud" ? t("engine_cloud")
-      : mode === "sample" ? t("engine_sample") : mode === "key" ? t("engine_native") : t("engine_none");
-    $("scan-engine").textContent = label;
-    $("ask-engine").textContent = label;
-    const on = mode !== "none";
-    $("scan-ui").hidden = !on;
-    $("scan-blocked").hidden = on;
-    if (!on) $("scan-blocked").innerHTML = EMPTY_ICON + "<strong>" + esc(t("blocked_t")) + "</strong><span>" + esc(t("blocked_d")) + "</span>";
-    $("ask-ui").hidden = !on;
-    $("ask-blocked").hidden = on;
-    if (!on) $("ask-blocked").innerHTML = EMPTY_ICON + "<strong>" + esc(t("ask_blocked_t")) + "</strong><span>" + esc(t("ask_blocked_d")) + "</span>";
-    // The key only matters where neither the artifact runtime nor an account is there.
-    $("settings").hidden = mode === "sample" || mode === "cloud";
+    AI.refresh();
+    const signed = Cloud.signedIn();
+    const imageMode = signed ? "cloud" : AI.imageMode();
+    const textMode = signed ? "cloud" : AI.textMode();
+    $("scan-engine").textContent = t(ENGINE_LABEL[imageMode]);
+    $("ask-engine").textContent = t(ENGINE_LABEL[textMode]);
+
+    const canScan = imageMode !== "none";
+    $("scan-ui").hidden = !canScan;
+    $("scan-blocked").hidden = canScan;
+    if (!canScan) {
+      // Say which of the two cases this is: no route to Claude at all, or a
+      // view that can talk to Claude but cannot hand it a photo.
+      const noImages = !!AI.sample && !AI.imageLimits;
+      $("scan-blocked").innerHTML = EMPTY_ICON +
+        "<strong>" + esc(t(noImages ? "noimg_t" : "blocked_t")) + "</strong><span>" +
+        esc(t(noImages ? "noimg_d" : "blocked_d")) + "</span>";
+    }
+
+    const canAsk = textMode !== "none";
+    $("ask-ui").hidden = !canAsk;
+    $("ask-blocked").hidden = canAsk;
+    if (!canAsk) $("ask-blocked").innerHTML = EMPTY_ICON + "<strong>" + esc(t("ask_blocked_t")) + "</strong><span>" + esc(t("ask_blocked_d")) + "</span>";
+
+    // The key setting is worth showing whenever it would actually unlock something.
+    $("settings").hidden = imageMode === "cloud" || (imageMode === "sample" && textMode === "sample");
     $("key-state").textContent = AI.embedded() ? t("key_embedded") : AI.hasKey() ? t("key_set") : t("key_none");
     if (AI.imageLimits && AI.imageLimits.mediaTypes) {
       $("file").accept = AI.imageLimits.mediaTypes.join(",");
@@ -2009,6 +2084,9 @@
     let qt;
     $("f-q").oninput = (e) => { clearTimeout(qt); qt = setTimeout(() => { state.q = e.target.value; renderCurrent(); }, 140); };
 
+    $("do-scan").onclick = () => runScan();
+    $("add-shot").onclick = () => $("file-camera").click();
+    $("clear-shots").onclick = resetScan;
     $("take").onclick = () => $("file-camera").click();
     $("pick").onclick = () => $("file").click();
     $("file").onchange = (e) => pickFile([...(e.target.files || [])]);
