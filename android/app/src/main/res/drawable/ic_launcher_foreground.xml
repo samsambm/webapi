@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A till receipt with a torn bottom edge, drawn inside the 108dp adaptive-icon
+     canvas with the standard 18dp safe margin on each side. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,26 L74,26 L74,78 L68.5,72.5 L63,78 L57.5,72.5 L52,78 L46.5,72.5 L41,78 L35.5,72.5 L34,74 Z" />
+    <path
+        android:fillColor="#2A78D6"
+        android:pathData="M40,37 L68,37 L68,41 L40,41 Z" />
+    <path
+        android:fillColor="#2A78D6"
+        android:pathData="M40,47 L68,47 L68,51 L40,51 Z" />
+    <path
+        android:fillColor="#2A78D6"
+        android:pathData="M40,57 L58,57 L58,61 L40,61 Z" />
+</vector>

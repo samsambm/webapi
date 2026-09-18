@@ -126,6 +126,38 @@ dashboard/template.html        the page source (edit this)
 dashboard/index.html           generated — do not edit by hand
 ```
 
+## Android app
+
+`android/` wraps the generated dashboard in a WebView. Push any branch, or run
+the **Build APK** workflow by hand, and the APK appears in the run's Artifacts as
+`basket-watch-apk`. See `android/README.md`.
+
+The APK carries the dashboard only. Scan and Ask call Claude through the artifact
+runtime, which exists only inside the published artifact, so in the APK they show a
+note instead. The data in the APK is a build-time snapshot — rebuild to refresh it.
+
+## Running this as a product
+
+Worth knowing before this goes to real customers, because it changes who pays for
+the AI:
+
+- **Today the AI is free to you.** In the published artifact, Scan and Ask run on
+  *each viewer's own Claude account*. That only works for people signed in to
+  claude.ai who have been given the artifact, so it is fine for you and a few
+  colleagues and is not a distribution channel.
+- **With customers, you pay per call**, through your own Anthropic API key, and you
+  need a backend to hold it. Never put an API key in an APK — it can be extracted
+  from the package in minutes. The shape is: phone → your server (key, per-user
+  quota, logging) → Anthropic API.
+- **Rough cost per receipt scanned** (≈2.5K input tokens for the photo and prompt,
+  ≈3K output tokens for the JSON): about $0.09 on Claude Opus 5, $0.035 on Sonnet 5,
+  $0.015 on Haiku 4.5. At 1,000 customers scanning 4 receipts a month that is
+  roughly $350 / $140 / $60 a month. Verify with `count_tokens` and real
+  `response.usage` before pricing anything on it.
+- **Levers**: the Batch API halves the cost for scans that can wait; prompt caching
+  cuts the repeated context on the Ask screen; and a smaller model for scanning is
+  worth measuring against a set of real receipts before assuming it is worse.
+
 ## Validation
 
 `build_dashboard.py` refuses to write the dashboard if a receipt is broken. It checks the
