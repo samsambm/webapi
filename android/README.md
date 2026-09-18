@@ -11,6 +11,17 @@ artifact runtime, which only exists inside the published artifact. In the APK
 they show a note explaining where to find them. Nothing in the APK calls an AI,
 so the APK costs nothing to run however many people install it.
 
+## Download the built APK
+
+Every push to the default branch publishes it here, at a link that does not change
+and needs no GitHub login:
+
+**https://github.com/samsambm/webapi/releases/download/apk-latest/basket-watch.apk**
+
+Open that on the phone, tap the downloaded file, and allow installs from whichever
+app opened it. The same build is also attached to each Actions run as the
+`basket-watch-apk` artifact, but those need a login and expire after 90 days.
+
 ## Build it on your own machine
 
 You need three things. Installing **Android Studio** gets you all of them

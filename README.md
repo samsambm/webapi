@@ -128,9 +128,11 @@ dashboard/index.html           generated — do not edit by hand
 
 ## Android app
 
-`android/` wraps the generated dashboard in a WebView. Push any branch, or run
-the **Build APK** workflow by hand, and the APK appears in the run's Artifacts as
-`basket-watch-apk`. See `android/README.md`.
+`android/` wraps the generated dashboard in a WebView. Download the built APK at
+**https://github.com/samsambm/webapi/releases/download/apk-latest/basket-watch.apk**
+— that link is public, needs no login and is rebuilt on every push. To build it
+yourself, run `android\build-apk.bat` (Windows) or `android/build-apk.sh`. See
+`android/README.md`.
 
 The APK carries the dashboard only. Scan and Ask call Claude through the artifact
 runtime, which exists only inside the published artifact, so in the APK they show a
