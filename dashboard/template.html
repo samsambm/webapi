@@ -186,6 +186,12 @@
   .drop h3 { font-size:17px; margin-bottom:5px; }
   .drop p { color:var(--muted); font-size:13px; margin:0 0 16px; }
   .drop .row { display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
+  /* Not display:none — a hidden file input cannot be opened by script on several
+     mobile browsers, so it stays in the layout and a <label> opens it natively. */
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+             overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+  label.btn { cursor:pointer; }
+  .sr-only:focus-visible + .row label, label.btn:focus-within { outline:2px solid var(--accent); outline-offset:1px; }
   .shots-row { display:flex; gap:8px; overflow-x:auto; padding-block:2px 6px; }
   .shot { position:relative; flex:none; }
   .shot img { width:74px; height:100px; object-fit:cover; border-radius:9px; border:1px solid var(--hairline); display:block; }
@@ -359,11 +365,11 @@
           </span>
           <h3 id="drop-title"></h3>
           <p id="drop-sub"></p>
-          <input type="file" id="file-camera" accept="image/*" capture="environment" hidden>
-          <input type="file" id="file" accept="image/*" multiple hidden>
+          <input type="file" id="file-camera" accept="image/*" capture="environment" class="sr-only">
+          <input type="file" id="file" accept="image/*" multiple class="sr-only">
           <div class="row">
-            <button type="button" class="btn btn-primary btn-lg" id="take"></button>
-            <button type="button" class="btn btn-lg" id="pick"></button>
+            <label class="btn btn-primary btn-lg" id="take" for="file-camera"></label>
+            <label class="btn btn-lg" id="pick" for="file"></label>
           </div>
         </div>
 
@@ -371,7 +377,7 @@
           <div class="shots-row" id="shots-row"></div>
           <div class="row-actions">
             <button type="button" class="btn btn-primary" id="do-scan"></button>
-            <button type="button" class="btn" id="add-shot"></button>
+            <label class="btn" id="add-shot" for="file-camera"></label>
             <button type="button" class="btn" id="clear-shots"></button>
           </div>
           <p class="sec" id="shots-hint" style="margin-top:10px"></p>
@@ -2107,12 +2113,15 @@
     $("f-q").oninput = (e) => { clearTimeout(qt); qt = setTimeout(() => { state.q = e.target.value; renderCurrent(); }, 140); };
 
     $("do-scan").onclick = () => runScan();
-    $("add-shot").onclick = () => $("file-camera").click();
     $("clear-shots").onclick = resetScan;
-    $("take").onclick = () => $("file-camera").click();
-    $("pick").onclick = () => $("file").click();
-    $("file").onchange = (e) => pickFile([...(e.target.files || [])]);
-    $("file-camera").onchange = (e) => pickFile([...(e.target.files || [])]);
+    // take / pick / add-shot are <label for="…"> — the browser opens the picker
+    // itself, which works where a scripted .click() on the input does not.
+    const took = (e) => {
+      pickFile([...(e.target.files || [])]);
+      e.target.value = "";          // so the same file can be chosen twice in a row
+    };
+    $("file").onchange = took;
+    $("file-camera").onchange = took;
     const drop = $("drop");
     ["dragenter", "dragover"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
     ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
