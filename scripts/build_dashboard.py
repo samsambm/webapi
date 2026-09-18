@@ -67,6 +67,7 @@ def build_payload(loaded: rc.LoadResult) -> dict:
             "generated_at": datetime.now().isoformat(timespec="seconds"),
             "currency": (loaded.receipts[0].get("currency") if loaded.receipts else "ILS"),
             "category_labels": rc.CATEGORY_LABELS,
+            "category_labels_he": rc.CATEGORY_LABELS_HE,
             "real_receipts": len(real),
             "demo_receipts": len(loaded.receipts) - len(real),
             "last_date": max((c["date"] for c in cards), default=""),

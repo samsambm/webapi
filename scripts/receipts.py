@@ -30,6 +30,14 @@ CATEGORY_LABELS = {
     "baby": "Baby", "pet": "Pet", "other": "Other",
 }
 
+CATEGORY_LABELS_HE = {
+    "produce": "פירות וירקות", "bakery": "מאפים", "dairy_eggs": "חלב וביצים",
+    "meat_fish": "בשר ודגים", "deli_prepared": "סלטים ומוכן", "frozen": "קפואים",
+    "pantry": "מזווה", "snacks_sweets": "חטיפים ומתוקים", "beverages": "משקאות",
+    "alcohol": "אלכוהול", "household": "מוצרי בית", "personal_care": "טיפוח",
+    "baby": "תינוקות", "pet": "חיות מחמד", "other": "אחר",
+}
+
 UNITS = {"each", "kg", "g", "l", "ml"}
 
 # Package size -> base unit for per-kg / per-litre comparison.

@@ -5,19 +5,49 @@ dashboard that compares prices across stores and over time.
 
 ![Dashboard](docs/dashboard.png)
 
+The app has three screens and speaks Hebrew and English:
+
+| Screen | What it is for |
+|---|---|
+| **Dashboard** | Spending, price trends, store comparison |
+| **Scan a bill** | Drop a receipt photo into the page; Claude reads it and saves it |
+| **Ask** | Questions in plain language, answered from your receipts |
+
 ## How it works
 
+Two ways in, one data store:
+
 ```
-photo of a bill  ──►  bill-scanner skill  ──►  data/receipts/*.json  ──►  dashboard/index.html
-                      (Claude reads it)       (validated, one per bill)   (charts + tables)
+photo of a bill ─┬─► bill-scanner skill (Claude Code) ─┐
+                 │                                     ├─► receipt JSON ──► dashboard
+                 └─► Scan screen (published app) ──────┘
 ```
 
-Nothing runs in the cloud and nothing is uploaded: the receipts are JSON files in this
-repo, and the dashboard is a single self-contained HTML file.
+In the repo the receipts are JSON files under `data/receipts/` and the dashboard is a
+single self-contained HTML file. In the published app, receipts scanned on the Scan
+screen are stored with the artifact and merge into the same views.
+
+## Hebrew and English
+
+The language switch in the header changes the interface language, the text direction
+(the whole layout mirrors for Hebrew), date and number formatting, and the category
+names. Item names are always shown as printed on the receipt, with the translation
+underneath. Time charts keep running left-to-right in both languages; the category and
+store bars mirror.
+
+The currency selector formats amounts in ILS, USD, EUR or GBP. Receipts record shekels,
+so another currency needs an exchange rate — type one in the box next to the selector
+and amounts convert for display only. Without a rate the app keeps showing shekels
+rather than inventing one.
 
 ## Scanning a bill
 
-In Claude Code (or Cowork), drop the photo into the chat and say:
+**In the app**: open the *Scan a bill* screen, drop in a photo, and Claude reads it on
+the spot. You get the parsed lines, a check that they sum to the printed total, and a
+Save button. Saved receipts live with the artifact and show up on the dashboard
+immediately; you can also download the JSON to commit into `data/receipts/`.
+
+**In Claude Code (or Cowork)**: drop the photo into the chat and say:
 
 > scan this bill
 
@@ -51,6 +81,16 @@ What it shows:
 | Same product, different store | Per-kg / per-litre price at each store, cheapest marked |
 | Price movers | Biggest price rises and drops, same product, same store |
 | Every line item | Sortable, searchable; amber rows need a check against the paper |
+
+## Asking questions
+
+The *Ask* screen answers questions about your own receipts — "which store is cheapest
+for me?", "what went up the most?", "how much did I spend on meat last month?". It
+answers in whichever language the app is set to.
+
+It is given a summary of the data plus a `query_lines` tool it can call to filter the
+line items itself, so numbers come from your receipts rather than from a guess. It runs
+on the viewer's Claude account and only in the published app.
 
 Comparisons are like-for-like on purpose: prices are normalised to **per kg, per litre or
 per item** before anything is compared, and price trends only ever compare a product with
