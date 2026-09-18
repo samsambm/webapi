@@ -23,7 +23,9 @@ jobs:
         run: python3 scripts/build_dashboard.py
 
       - name: Bundle the dashboard into the app
-        run: cp dashboard/index.html android/app/src/main/assets/index.html
+        run: |
+          mkdir -p android/app/src/main/assets
+          cp dashboard/index.html android/app/src/main/assets/index.html
 
       - uses: actions/setup-java@v4
         with:
