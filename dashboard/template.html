@@ -1711,22 +1711,46 @@
     if (scanFiles.length > 1) return scanFiles.slice(0, cap);
     return sliceTall(scanFiles[0], cap);
   }
-  async function runScan() {
-    if (!scanFiles.length) return;
-    if (!Cloud.signedIn() && AI.imageMode() === "none") {
-      // Nothing to send it to — but the attempt was allowed, so answer it.
-      $("scan-stage").hidden = false;
-      $("scan-img").src = URL.createObjectURL(scanFiles[0]);
-      status($("scan-status"), "", false);
-      $("scan-result").innerHTML = '<div class="notice notice-warn">' +
-        esc(t(!!AI.sample && !AI.imageLimits ? "noimg_d" : "blocked_d")) + "</div>";
-      $("scan-actions").innerHTML = "";
-      return;
-    }
+  /** Put the stage on screen and say something, whatever happens next. */
+  function openStage() {
     $("scan-stage").hidden = false;
     $("scan-img").src = URL.createObjectURL(scanFiles[0]);
     $("scan-result").innerHTML = "";
-    $("scan-stage").scrollIntoView({ block: "nearest", behavior: "smooth" });
+    $("scan-actions").innerHTML = "";
+    try { $("scan-stage").scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { /* older engines */ }
+  }
+  function busyButton(on) {
+    const b = $("do-scan");
+    if (!b) return;
+    b.disabled = on;
+    if (on) b.textContent = t("scanning");
+    else renderShots();
+  }
+
+  async function runScan() {
+    if (!scanFiles.length) return;
+    busyButton(true);
+    openStage();
+    try {
+      await runScanInner();
+    } catch (e) {
+      // Anything unexpected still has to reach the screen rather than the console.
+      status($("scan-status"), "", false);
+      $("scan-result").innerHTML = '<div class="notice notice-bad">' +
+        esc(t("scan_failed", { m: (e && (e.message || e.code)) || String(e) })) + "</div>";
+    } finally {
+      busyButton(false);
+    }
+  }
+
+  async function runScanInner() {
+    if (!Cloud.signedIn() && AI.imageMode() === "none") {
+      // Nothing to send it to — but the attempt was allowed, so answer it.
+      status($("scan-status"), "", false);
+      $("scan-result").innerHTML = '<div class="notice notice-warn">' +
+        esc(t(!!AI.sample && !AI.imageLimits ? "noimg_d" : "blocked_d")) + "</div>";
+      return;
+    }
     const statusEl = $("scan-status");
     status(statusEl, t("preparing"), true);
     let parts;
@@ -2173,6 +2197,18 @@
       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); ask($("ask-input").value); }
     };
     $("ask-stop").onclick = () => { if (askCtl) askCtl.abort(); };
+
+    // A failure that reaches neither the screen nor a catch block is the worst
+    // kind: the button looks dead. Surface anything that escapes.
+    const surface = (message) => {
+      if ($("scan-stage").hidden) return;
+      status($("scan-status"), "", false);
+      $("scan-result").innerHTML = '<div class="notice notice-bad">' +
+        esc(t("scan_failed", { m: String(message).slice(0, 200) })) + "</div>";
+      busyButton(false);
+    };
+    addEventListener("unhandledrejection", (e) => surface((e.reason && (e.reason.message || e.reason.code)) || e.reason));
+    addEventListener("error", (e) => surface(e.message || "error"));
 
     let rt;
     addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(renderCurrent, 160); });
