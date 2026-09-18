@@ -21,8 +21,9 @@ Bill scanning → receipt JSON → spending dashboard. See README.md for the sha
   (`sample`), the device's own API key (through the Android native bridge, else `fetch`),
   or none — in which case the Scan and Ask screens must say so rather than break. The
   dashboard itself never needs Claude and has to stay useful offline.
-- An API key belongs in `localStorage` on the device and nowhere else: never in the repo,
-  never compiled into the APK, never logged.
+- An API key belongs in `localStorage` on the device, or in `dashboard/local.html` — a
+  gitignored local build for the owner's own devices. It must never reach `index.html`,
+  `artifact.html`, CI, or a release, and must never be logged.
 - **`server/` is the only place a service key or Anthropic key may live.** The page may
   hold the Supabase *anon* key (RLS is the protection, not the key); it must never hold
   the service key. `server/` may use pip dependencies — the stdlib-only rule is about the

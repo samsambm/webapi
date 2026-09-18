@@ -548,6 +548,7 @@
       key_help: "Stored only on this device, in this app. It is never sent anywhere but api.anthropic.com, and never leaves with the app — each person installing this app needs their own key. Scans cost roughly $0.09 each on your API account.",
       key_save: "Save", key_clear: "Clear",
       key_set: "A key is saved on this device. Scanning and Ask are on.",
+      key_embedded: "This build carries a key of its own, so scanning works with nothing to type. Anyone holding this build can spend on that key — keep it to yourself.",
       key_none: "No key saved. Get one at console.anthropic.com → API keys.",
       key_bad: "That does not look like an Anthropic key (they start with sk-ant-).",
       h_saved: "Scanned in this app", s_saved: "Receipts you scanned here, kept with the app.",
@@ -645,6 +646,7 @@
       key_help: "נשמר רק במכשיר הזה, באפליקציה הזו. הוא נשלח רק ל-api.anthropic.com ולא נארז יחד עם האפליקציה — כל מי שמתקין צריך מפתח משלו. עלות סריקה כ-0.09$ על חשבון ה-API שלך.",
       key_save: "שמור", key_clear: "מחק",
       key_set: "יש מפתח שמור במכשיר. הסריקה והשאלות פעילות.",
+      key_embedded: "הבנייה הזו נושאת מפתח משלה, אז הסריקה עובדת בלי להקליד כלום. כל מי שמחזיק בבנייה הזו יכול להוציא כסף על המפתח — אל תפיץ אותה.",
       key_none: "אין מפתח שמור. אפשר להנפיק ב-console.anthropic.com ← API keys.",
       key_bad: "זה לא נראה כמו מפתח של Anthropic (הם מתחילים ב-sk-ant-).",
       h_saved: "נסרק באפליקציה", s_saved: "חשבוניות שסרקת כאן, נשמרות עם האפליקציה.",
@@ -811,7 +813,10 @@
   const AI = {
     mode: "none", sample: null, imageLimits: null, native: null, _cb: 0, _pending: {},
 
-    key() { return String(store.get("apikey", "") || ""); },
+    // A key typed on the device wins; otherwise a key baked in at build time,
+    // which only exists in a local build the owner installs themselves.
+    key() { return String(store.get("apikey", "") || (DATA.meta && DATA.meta.embedded_key) || ""); },
+    embedded() { return !!(DATA.meta && DATA.meta.embedded_key) && !store.get("apikey", ""); },
     hasKey() { return this.key().length > 10; },
 
     async init() {
@@ -902,7 +907,7 @@
       }
       const data = await this.blobToBase64(blob);
       const response = await this._post({
-        model: "claude-opus-5",
+        model: (DATA.meta && DATA.meta.scan_model) || "claude-sonnet-5",
         max_tokens: 16000,
         messages: [{
           role: "user",
@@ -923,7 +928,7 @@
         return res.text;
       }
       const response = await this._post({
-        model: "claude-opus-5",
+        model: (DATA.meta && DATA.meta.scan_model) || "claude-sonnet-5",
         max_tokens: 8000,
         messages: turns.map((m) => ({ role: m.role, content: m.content })),
       });
@@ -1866,7 +1871,7 @@
     if (!on) $("ask-blocked").innerHTML = EMPTY_ICON + "<strong>" + esc(t("ask_blocked_t")) + "</strong><span>" + esc(t("ask_blocked_d")) + "</span>";
     // The key only matters where neither the artifact runtime nor an account is there.
     $("settings").hidden = mode === "sample" || mode === "cloud";
-    $("key-state").textContent = AI.hasKey() ? t("key_set") : t("key_none");
+    $("key-state").textContent = AI.embedded() ? t("key_embedded") : AI.hasKey() ? t("key_set") : t("key_none");
     if (AI.imageLimits && AI.imageLimits.mediaTypes) {
       $("file").accept = AI.imageLimits.mediaTypes.join(",");
     }

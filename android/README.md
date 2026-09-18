@@ -58,6 +58,26 @@ sdk.dir=C:\\Users\\sammybe\\AppData\\Local\\Android\\Sdk
 
 (Backslashes are doubled in that file — that is not a typo.)
 
+### Building one that already has your API key
+
+Scanning needs a key. Rather than typing it into the app on every device you own,
+a local build can carry it:
+
+```bat
+set BW_ANTHROPIC_KEY=sk-ant-...
+python scripts\build_dashboard.py
+android\build-apk.bat
+```
+
+That writes `dashboard\local.html` — the same page with the key inside it — and
+the build script uses it in place of the normal one. `local.html` is gitignored,
+CI never has the key, and the APK published in the release never carries it.
+
+**That build is for devices you own.** Anyone holding the file can extract the
+key and spend on your account, so do not put it in a release, a chat, or a shared
+drive. To hand the app to other people, run the server (`server/README.md`): then
+the key stays on the server and each person signs in as themselves.
+
 ### macOS and Linux
 
 ```bash

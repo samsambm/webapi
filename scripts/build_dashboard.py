@@ -24,6 +24,9 @@ ROOT = rc.ROOT
 TEMPLATE = ROOT / "dashboard" / "template.html"
 OUT_PAGE = ROOT / "dashboard" / "index.html"
 OUT_FRAGMENT = ROOT / "dashboard" / "artifact.html"
+# A build carrying an embedded API key is written here instead, never to
+# index.html, because index.html is committed. local.html is gitignored.
+OUT_LOCAL = ROOT / "dashboard" / "local.html"
 
 PAGE_HEAD = """<!doctype html>
 <html lang="en">
@@ -71,6 +74,7 @@ def build_payload(loaded: rc.LoadResult) -> dict:
                 "supabase_url": os.environ.get("BW_SUPABASE_URL", "").rstrip("/"),
                 "supabase_anon_key": os.environ.get("BW_SUPABASE_ANON_KEY", ""),
             },
+            "scan_model": os.environ.get("BW_SCAN_MODEL", "claude-sonnet-5"),
             "category_labels": rc.CATEGORY_LABELS,
             "category_labels_he": rc.CATEGORY_LABELS_HE,
             "receipt_count": len(loaded.receipts),
@@ -109,10 +113,19 @@ def main() -> int:
 
     payload = build_payload(loaded)
     meta = payload["meta"]
+    baked_key = os.environ.get("BW_ANTHROPIC_KEY", "").strip()
     if not args.check:
         fragment = render(payload)
         OUT_FRAGMENT.write_text(fragment, encoding="utf-8")
         OUT_PAGE.write_text(PAGE_HEAD + fragment + PAGE_TAIL, encoding="utf-8")
+        if baked_key:
+            # Same page, with the key in it. Kept out of git and out of CI so a
+            # published APK can never carry it.
+            keyed = dict(payload)
+            keyed["meta"] = dict(payload["meta"], embedded_key=baked_key)
+            OUT_LOCAL.write_text(PAGE_HEAD + render(keyed) + PAGE_TAIL, encoding="utf-8")
+        elif OUT_LOCAL.exists():
+            OUT_LOCAL.unlink()   # a stale keyed build must not outlive the key
 
     if not args.quiet:
         spend = sum(c["total"] for c in payload["receipts"])
@@ -124,6 +137,10 @@ def main() -> int:
             print("--check: validation only, dashboard not rewritten.")
         else:
             print(f"wrote {OUT_PAGE.relative_to(ROOT)} and {OUT_FRAGMENT.relative_to(ROOT)}")
+            if baked_key:
+                print(f"wrote {OUT_LOCAL.relative_to(ROOT)} WITH AN EMBEDDED API KEY.")
+                print("  Install that build yourself only. Anyone holding it holds your key,")
+                print("  so never publish it, never commit it, never put it in a release.")
     return 0
 
 
