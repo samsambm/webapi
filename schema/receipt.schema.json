@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/samsambm/webapi/schema/receipt.schema.json",
+  "title": "Scanned bill / receipt",
+  "type": "object",
+  "required": ["schema_version", "receipt_id", "merchant", "purchased_at", "currency", "items", "totals"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "receipt_id": {
+      "type": "string",
+      "description": "Stable id: <YYYY-MM-DD>_<merchant-slug>_<document number or hash>",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}_[a-z0-9-]+_[A-Za-z0-9-]+$"
+    },
+    "demo": { "type": "boolean", "default": false, "description": "true = synthetic sample data, never real spending" },
+    "source_image": { "type": ["string", "null"], "description": "Path or filename of the scanned photo" },
+    "scanned_at": { "type": "string", "format": "date-time" },
+    "merchant": {
+      "type": "object",
+      "required": ["name", "slug"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "description": "Exactly as printed (Hebrew kept as-is)" },
+        "name_en": { "type": ["string", "null"] },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "branch": { "type": ["string", "null"] },
+        "tax_id": { "type": ["string", "null"], "description": "ח.פ / ע.מ" },
+        "phone": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] }
+      }
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["invoice_receipt", "receipt", "invoice", "credit_note", "unknown"] },
+        "number": { "type": ["string", "null"] },
+        "is_copy": { "type": "boolean" },
+        "register": { "type": ["string", "null"] }
+      }
+    },
+    "purchased_at": { "type": "string", "description": "ISO 8601 local time, e.g. 2026-09-18T11:44:00" },
+    "currency": { "type": "string", "description": "ISO 4217, e.g. ILS" },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["line", "name", "category", "quantity", "unit", "unit_price", "total"],
+        "additionalProperties": false,
+        "properties": {
+          "line": { "type": "integer", "minimum": 1 },
+          "barcode": { "type": ["string", "null"], "description": "Barcode or internal PLU as printed" },
+          "name": { "type": "string", "description": "Exactly as printed" },
+          "name_en": { "type": ["string", "null"], "description": "Best-effort translation, for charts and search" },
+          "category": {
+            "enum": ["produce", "bakery", "dairy_eggs", "meat_fish", "deli_prepared", "frozen",
+                     "pantry", "snacks_sweets", "beverages", "alcohol", "household",
+                     "personal_care", "baby", "pet", "other"]
+          },
+          "quantity": { "type": "number", "exclusiveMinimum": 0 },
+          "unit": { "enum": ["each", "kg", "g", "l", "ml"] },
+          "unit_price": { "type": "number", "description": "Price per unit as printed (per each or per kg)" },
+          "total": { "type": "number", "description": "Line total actually charged" },
+          "size": {
+            "type": ["object", "null"],
+            "required": ["value", "unit"],
+            "additionalProperties": false,
+            "properties": { "value": { "type": "number" }, "unit": { "enum": ["g", "kg", "ml", "l", "unit"] } },
+            "description": "Package size, used for price-per-kg / per-litre comparison"
+          },
+          "discount": { "type": ["number", "null"], "description": "Positive number = amount taken off this line" },
+          "vat_exempt": { "type": ["boolean", "null"] },
+          "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "required": ["total"],
+      "additionalProperties": false,
+      "properties": {
+        "items_count": { "type": ["integer", "null"] },
+        "subtotal": { "type": ["number", "null"] },
+        "discount_total": { "type": ["number", "null"] },
+        "total": { "type": "number" },
+        "vat_rate": { "type": ["number", "null"], "description": "0.18 = 18%" },
+        "vat_amount": { "type": ["number", "null"] },
+        "vat_taxable": { "type": ["number", "null"] },
+        "vat_exempt": { "type": ["number", "null"] }
+      }
+    },
+    "payment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": { "enum": ["credit", "cash", "debit", "voucher", "mixed", "other", "unknown"] },
+        "amount": { "type": ["number", "null"] },
+        "change": { "type": ["number", "null"] },
+        "card_brand": { "type": ["string", "null"] },
+        "card_last4": { "type": ["string", "null"], "pattern": "^[0-9]{4}$", "description": "Last 4 only. Never store a full PAN." },
+        "terminal": { "type": ["string", "null"] },
+        "auth_code": { "type": ["string", "null"] }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overall_confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "needs_human_check": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

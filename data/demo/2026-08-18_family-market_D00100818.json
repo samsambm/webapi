@@ -1,0 +1,241 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "2026-08-18_family-market_D00100818",
+  "demo": true,
+  "source_image": null,
+  "scanned_at": "2026-08-18T11:14:00",
+  "merchant": {
+    "name": "י.א. פמילי מרקט בע\"מ",
+    "name_en": "Y.A. Family Market Ltd",
+    "slug": "family-market",
+    "branch": "ניצני עוז",
+    "tax_id": "515847747",
+    "phone": null,
+    "address": null
+  },
+  "document": {
+    "type": "invoice_receipt",
+    "number": "D00100818",
+    "is_copy": false,
+    "register": "1"
+  },
+  "purchased_at": "2026-08-18T11:14",
+  "currency": "ILS",
+  "items": [
+    {
+      "line": 1,
+      "barcode": "7290008757775",
+      "name": "שניצל עוף טרי",
+      "name_en": "Fresh chicken schnitzel",
+      "category": "meat_fish",
+      "quantity": 0.45,
+      "unit": "kg",
+      "unit_price": 45.39,
+      "total": 20.43,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 2,
+      "barcode": "7290000208831",
+      "name": "שמן זית 750 מ\"ל",
+      "name_en": "Olive oil 750ml",
+      "category": "pantry",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 39.72,
+      "total": 39.72,
+      "size": {
+        "value": 750,
+        "unit": "ml"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 3,
+      "barcode": "7290011462000",
+      "name": "חומוס ביתי /מטבחה/ירושל",
+      "name_en": "Home-style hummus",
+      "category": "deli_prepared",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 12.7,
+      "total": 12.7,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 4,
+      "barcode": "14210",
+      "name": "עגבניות",
+      "name_en": "Tomatoes",
+      "category": "produce",
+      "quantity": 0.775,
+      "unit": "kg",
+      "unit_price": 6.31,
+      "total": 4.89,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 5,
+      "barcode": "7290019049920",
+      "name": "קולה זירו 1.5 ליטר",
+      "name_en": "Cola Zero 1.5L",
+      "category": "beverages",
+      "quantity": 2.0,
+      "unit": "each",
+      "unit_price": 8.47,
+      "total": 16.94,
+      "size": {
+        "value": 1.5,
+        "unit": "l"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 6,
+      "barcode": "14201",
+      "name": "מלפפון",
+      "name_en": "Cucumber",
+      "category": "produce",
+      "quantity": 1.044,
+      "unit": "kg",
+      "unit_price": 7.35,
+      "total": 7.67,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 7,
+      "barcode": "14033",
+      "name": "בצל יבש ישראל",
+      "name_en": "Dry onion, Israel",
+      "category": "produce",
+      "quantity": 0.986,
+      "unit": "kg",
+      "unit_price": 6.62,
+      "total": 6.53,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 8,
+      "barcode": "7290000119946",
+      "name": "במבה אסם 80 גרם",
+      "name_en": "Bamba 80g",
+      "category": "snacks_sweets",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 4.85,
+      "total": 4.85,
+      "size": {
+        "value": 80,
+        "unit": "g"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 9,
+      "barcode": "7290102393916",
+      "name": "אורז בסמטי 1 ק\"ג",
+      "name_en": "Basmati rice 1kg",
+      "category": "pantry",
+      "quantity": 2.0,
+      "unit": "each",
+      "unit_price": 14.1,
+      "total": 28.2,
+      "size": {
+        "value": 1,
+        "unit": "kg"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 10,
+      "barcode": "122269",
+      "name": "קבב הבית",
+      "name_en": "House kebab",
+      "category": "meat_fish",
+      "quantity": 0.372,
+      "unit": "kg",
+      "unit_price": 64.93,
+      "total": 24.15,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 11,
+      "barcode": "7290004131074",
+      "name": "חלב תנובה 3% ליטר",
+      "name_en": "Tnuva milk 3% 1L",
+      "category": "dairy_eggs",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 6.43,
+      "total": 6.43,
+      "size": {
+        "value": 1,
+        "unit": "l"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    }
+  ],
+  "totals": {
+    "items_count": 11,
+    "subtotal": 172.51,
+    "discount_total": 0,
+    "total": 172.51,
+    "vat_rate": 0.18,
+    "vat_amount": 26.32,
+    "vat_taxable": 146.19,
+    "vat_exempt": 0
+  },
+  "payment": {
+    "method": "credit",
+    "amount": 172.51,
+    "change": 0,
+    "card_brand": "ויזה כאל",
+    "card_last4": "7462",
+    "terminal": "2656917",
+    "auth_code": null
+  },
+  "review": {
+    "overall_confidence": 1.0,
+    "needs_human_check": [],
+    "notes": "Synthetic demo receipt generated by scripts/make_demo_data.py — not a real purchase."
+  }
+}

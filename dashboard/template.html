@@ -1,0 +1,797 @@
+<title>Basket Watch</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground:      #f3f4f1;
+    --surface:     #ffffff;
+    --surface-2:   #fafbf9;
+    --ink:         #12151a;
+    --ink-2:       #46505a;
+    --muted:       #6b7580;
+    --hairline:    #e3e6e0;
+    --hairline-2:  #eef0ec;
+    --accent:      #2a78d6;
+    --accent-soft: #e8f0fc;
+    --good:        #008300;
+    --bad:         #c2352f;
+    --flag:        #9a6700;
+    --flag-soft:   #fdf4e0;
+    --store-1:     #2a78d6;
+    --store-2:     #eb6834;
+    --store-3:     #1baf7a;
+    --demo-band:   #f6efdd;
+    --shadow:      0 1px 2px rgba(18,21,26,.05), 0 8px 24px -16px rgba(18,21,26,.25);
+    --radius:      10px;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Heebo", ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #131619;
+      --surface:     #1a1e22;
+      --surface-2:   #1e2327;
+      --ink:         #f0f2ee;
+      --ink-2:       #c3c9cf;
+      --muted:       #97a1aa;
+      --hairline:    #2a3036;
+      --hairline-2:  #22272c;
+      --accent:      #3987e5;
+      --accent-soft: #17293f;
+      --good:        #3fa34d;
+      --bad:         #e66767;
+      --flag:        #e0b155;
+      --flag-soft:   #2c2415;
+      --store-1:     #3987e5;
+      --store-2:     #d95926;
+      --store-3:     #199e70;
+      --demo-band:   #2a2417;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 10px 26px -18px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #131619;
+    --surface:     #1a1e22;
+    --surface-2:   #1e2327;
+    --ink:         #f0f2ee;
+    --ink-2:       #c3c9cf;
+    --muted:       #97a1aa;
+    --hairline:    #2a3036;
+    --hairline-2:  #22272c;
+    --accent:      #3987e5;
+    --accent-soft: #17293f;
+    --good:        #3fa34d;
+    --bad:         #e66767;
+    --flag:        #e0b155;
+    --flag-soft:   #2c2415;
+    --store-1:     #3987e5;
+    --store-2:     #d95926;
+    --store-3:     #199e70;
+    --demo-band:   #2a2417;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 10px 26px -18px rgba(0,0,0,.8);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+    background: color-mix(in srgb, var(--ground) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .topbar-inner { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; padding-block: 12px; }
+  .brand { display: flex; align-items: baseline; gap: 10px; margin-inline-end: auto; }
+  .brand h1 { font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
+  .brand .tick { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  select, input[type="search"] {
+    font: inherit; font-size: 13px; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 7px; padding: 6px 9px; min-width: 0;
+  }
+  input[type="search"] { width: 190px; }
+  select:focus-visible, input:focus-visible, button:focus-visible, th[role="button"]:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .switch { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+  .switch input { accent-color: var(--accent); width: 15px; height: 15px; }
+
+  .demo-band {
+    background: var(--demo-band); border-bottom: 1px solid var(--hairline);
+    font-size: 12.5px; color: var(--ink-2);
+  }
+  .demo-band .wrap { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; padding-block: 7px; }
+  .pill {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    background: var(--flag-soft); color: var(--flag); border: 1px solid color-mix(in srgb, var(--flag) 35%, transparent);
+    border-radius: 999px; padding: 2px 8px; white-space: nowrap;
+  }
+
+  /* ---------- kpis ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px;
+          background: var(--hairline); border: 1px solid var(--hairline); border-radius: var(--radius);
+          overflow: hidden; margin-block: 22px; }
+  .kpi { background: var(--surface); padding: 15px 16px 16px; }
+  .kpi .k-label { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .kpi .k-value { font-family: var(--mono); font-size: 25px; font-weight: 600; letter-spacing: -.03em; margin-top: 6px; }
+  .kpi .k-note { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .kpi.flagged .k-value { color: var(--bad); }
+
+  /* ---------- cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+  .card + .card, .grid + .card, .card + .grid, .grid + .grid { margin-top: 16px; }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .card h2 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+  .card .sub { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; }
+  .card .hint { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .chart { width: 100%; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .empty {
+    border: 1px dashed var(--hairline); border-radius: 8px; padding: 22px 18px;
+    color: var(--muted); font-size: 13.5px; text-align: center; background: var(--surface-2);
+  }
+  .empty strong { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- tables ---------- */
+  .scroll { overflow-x: auto; margin-inline: -4px; padding-inline: 4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--hairline-2); white-space: nowrap; }
+  th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+       font-weight: 600; border-bottom: 1px solid var(--hairline); position: sticky; top: 0; background: var(--surface); }
+  th[role="button"] { cursor: pointer; user-select: none; }
+  th[role="button"]:hover { color: var(--ink); }
+  td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.name { white-space: normal; min-width: 190px; max-width: 320px; }
+  .sec { font-size: 12px; color: var(--muted); }
+  .best { color: var(--good); font-weight: 600; }
+  .best::after { content: " ✓"; }
+  .delta-up { color: var(--bad); font-weight: 600; }
+  .delta-down { color: var(--good); font-weight: 600; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--ink-2); }
+  .dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; }
+  .flagrow td { background: color-mix(in srgb, var(--flag-soft) 60%, transparent); }
+  .tag { font-size: 10.5px; font-family: var(--mono); color: var(--muted); }
+
+  /* ---------- tooltip ---------- */
+  #tip {
+    position: fixed; z-index: 90; pointer-events: none; opacity: 0; transition: opacity .09s;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--hairline);
+    border-radius: 7px; padding: 8px 10px; font-size: 12.5px; box-shadow: var(--shadow); max-width: 260px;
+  }
+  #tip .t-title { font-weight: 700; margin-bottom: 3px; }
+  #tip .t-row { color: var(--ink-2); font-family: var(--mono); font-size: 12px; }
+  .mark { transition: opacity .1s; }
+  .mark:hover { opacity: .82; }
+
+  footer { color: var(--muted); font-size: 12.5px; padding-block: 30px 40px; }
+  footer code { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (max-width: 560px) {
+    .brand h1 { font-size: 17px; }
+    input[type="search"] { width: 100%; }
+    .controls { width: 100%; }
+    .kpi .k-value { font-size: 21px; }
+  }
+</style>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <h1>Basket Watch</h1>
+      <span class="tick" id="range-tick"></span>
+    </div>
+    <div class="controls">
+      <label class="switch" for="f-demo"><input type="checkbox" id="f-demo" checked> demo history</label>
+      <select id="f-period" aria-label="Period"></select>
+      <select id="f-store" aria-label="Store"></select>
+      <select id="f-cat" aria-label="Category"></select>
+      <input type="search" id="f-q" placeholder="Search item…" aria-label="Search item">
+    </div>
+  </div>
+</div>
+<div class="demo-band" id="demo-band" hidden>
+  <div class="wrap">
+    <span class="pill">demo data on</span>
+    <span id="demo-band-text"></span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="kpis" id="kpis"></section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="card-head"><h2>Spend by month</h2><span class="hint" id="spend-hint"></span></div>
+      <p class="sub">Every shop, totalled by the month it happened.</p>
+      <div class="chart" id="c-months"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>Where the money goes</h2><span class="hint" id="cat-hint"></span></div>
+      <p class="sub">Share of spend by category.</p>
+      <div class="chart" id="c-cats"></div>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <div class="card-head"><h2>Basket price index</h2><span class="hint">100 = first month</span></div>
+      <p class="sub">Same products, same quantities — what the shelf price did over time.</p>
+      <div class="chart" id="c-index"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>Store price level</h2><span class="hint">100 = cheapest</span></div>
+      <p class="sub">Only products you bought at more than one store are counted.</p>
+      <div class="chart" id="c-stores"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-head"><h2>Same product, different store</h2><span class="hint" id="cmp-hint"></span></div>
+    <p class="sub">Latest price seen at each store, on a per-kg, per-litre or per-item basis.</p>
+    <div id="t-compare"></div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="card-head"><h2>Price movers</h2><span class="hint">first → latest</span></div>
+      <p class="sub">Biggest shelf-price moves across your receipts.</p>
+      <div id="t-movers"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>Receipts</h2><span class="hint" id="rec-hint"></span></div>
+      <p class="sub">Every scanned bill, newest first.</p>
+      <div id="t-receipts"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-head"><h2>Every line item</h2><span class="hint" id="lines-hint"></span></div>
+    <p class="sub">Sort any column. Amber rows were flagged by the scanner as worth checking against the paper receipt.</p>
+    <div id="t-lines"></div>
+  </section>
+
+  <footer>
+    Generated by <code>python3 scripts/build_dashboard.py</code> from <code>data/receipts/*.json</code>.
+    Scan another bill with the <code>bill-scanner</code> skill and rerun to refresh.
+    <span id="built"></span>
+  </footer>
+</main>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+  const DATA = /*__DATA__*/ { rows: [], receipts: [], meta: {} };
+  const $ = (id) => document.getElementById(id);
+
+  const ILS = new Intl.NumberFormat("en-IL", { style: "currency", currency: "ILS", maximumFractionDigits: 2 });
+  const ILS0 = new Intl.NumberFormat("en-IL", { style: "currency", currency: "ILS", maximumFractionDigits: 0 });
+  const money = (n) => ILS.format(n || 0);
+  const money0 = (n) => ILS0.format(n || 0);
+  const pct = (n) => (n > 0 ? "+" : "") + n.toFixed(1) + "%";
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthLabel = (m) => MONTHS[Number(m.slice(5, 7)) - 1] + " " + m.slice(2, 4);
+  const BASE_UNIT = { kg: "/kg", l: "/L", each: " ea" };
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  // Colour follows the store, not its rank: fixed slot per merchant, assigned once.
+  const STORE_SLOTS = {};
+  [...new Set(DATA.rows.map((r) => r.merchant_slug))].sort().forEach((slug, i) => {
+    STORE_SLOTS[slug] = "--store-" + ((i % 3) + 1);
+  });
+  const storeColor = (slug) => css(STORE_SLOTS[slug] || "--store-1") || "#2a78d6";
+  const STORE_NAMES = {};
+  DATA.rows.forEach((r) => { STORE_NAMES[r.merchant_slug] = r.merchant_name; });
+
+  const state = { demo: true, period: "all", store: "all", cat: "all", q: "", sortLines: { key: "total", dir: -1 } };
+
+  /* ---------------- filtering ---------------- */
+  function periodStart() {
+    if (state.period === "all") return "0000-00-00";
+    const months = Number(state.period);
+    const last = DATA.meta.last_date ? new Date(DATA.meta.last_date) : new Date();
+    const d = new Date(last.getFullYear(), last.getMonth() - months + 1, 1);
+    return d.toISOString().slice(0, 10);
+  }
+  function visibleRows() {
+    const from = periodStart();
+    const q = state.q.trim().toLowerCase();
+    return DATA.rows.filter((r) =>
+      (state.demo || !r.demo) &&
+      r.date >= from &&
+      (state.store === "all" || r.merchant_slug === state.store) &&
+      (state.cat === "all" || r.category === state.cat) &&
+      (!q || r.name.toLowerCase().includes(q) || (r.name_en || "").toLowerCase().includes(q) || (r.barcode || "").includes(q))
+    );
+  }
+  function visibleReceipts(rows) {
+    const ids = new Set(rows.map((r) => r.receipt_id));
+    return DATA.receipts.filter((r) => ids.has(r.receipt_id));
+  }
+  const sum = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
+  function groupBy(rows, key) {
+    const m = new Map();
+    rows.forEach((r) => { const k = key(r); if (!m.has(k)) m.set(k, []); m.get(k).push(r); });
+    return m;
+  }
+
+  /* ---------------- price intelligence ---------------- */
+  // Latest price per (product, store), on the comparable base unit.
+  function priceBook(rows) {
+    const book = new Map();
+    rows.forEach((r) => {
+      if (!book.has(r.product_key)) {
+        book.set(r.product_key, { key: r.product_key, name: r.name, name_en: r.name_en, unit: r.base_unit, category: r.category, stores: new Map(), history: [] });
+      }
+      const p = book.get(r.product_key);
+      p.history.push(r);
+      const prev = p.stores.get(r.merchant_slug);
+      if (!prev || r.date > prev.date) p.stores.set(r.merchant_slug, { date: r.date, price: r.base_price });
+    });
+    book.forEach((p) => p.history.sort((a, b) => a.date.localeCompare(b.date)));
+    return book;
+  }
+  // What the same shopping would have cost at the cheapest store that sells each item.
+  function overpay(rows, book) {
+    let lost = 0;
+    const per = new Map();
+    rows.forEach((r) => {
+      const p = book.get(r.product_key);
+      if (!p || p.stores.size < 2) return;
+      let best = null;
+      p.stores.forEach((v, slug) => { if (!best || v.price < best.price) best = { price: v.price, slug }; });
+      if (!best || best.slug === r.merchant_slug) return;
+      const diff = (r.base_price - best.price) * r.base_qty;
+      if (diff <= 0.01) return;
+      lost += diff;
+      per.set(r.product_key, (per.get(r.product_key) || 0) + diff);
+    });
+    return { lost, per };
+  }
+  // Matched-model index: every price is compared with the FIRST price of the same
+  // product at the same store, so a pricier store entering the data never reads as
+  // inflation. Weighted by what that product costs you per shop.
+  function basketIndex(rows) {
+    const months = [...new Set(rows.map((r) => r.month))].sort();
+    if (months.length < 2) return [];
+    const tracked = [];
+    groupBy(rows, (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
+      const sorted = [...rs].sort((a, b) => a.date.localeCompare(b.date));
+      const byMonth = new Map();
+      sorted.forEach((r) => byMonth.set(r.month, r.base_price));
+      if (byMonth.size < 2 || !sorted[0].base_price) return;
+      tracked.push({ byMonth, base: sorted[0].base_price, weight: sum(sorted, (r) => r.total) / sorted.length });
+    });
+    if (!tracked.length) return [];
+    const raw = [];
+    months.forEach((m) => {
+      let num = 0, den = 0, fresh = 0;
+      tracked.forEach((t) => {
+        let rel = null, seen = false;
+        t.byMonth.forEach((price, mm) => { if (mm <= m) { rel = price / t.base; if (mm === m) seen = true; } });
+        if (rel === null) return;
+        num += rel * t.weight; den += t.weight; if (seen) fresh += 1;
+      });
+      if (den) raw.push({ month: m, value: num / den, covered: fresh, total: tracked.length });
+    });
+    if (raw.length < 2) return [];
+    const base = raw[0].value || 1;
+    return raw.map((p) => ({ ...p, value: (p.value / base) * 100 }));
+  }
+
+  // Store level: index each store's prices against the cheapest store, shared products only.
+  function storeLevels(rows, book) {
+    const stores = [...new Set(rows.map((r) => r.merchant_slug))];
+    if (stores.length < 2) return [];
+    const shared = [];
+    book.forEach((p) => { if (p.stores.size >= 2) shared.push(p); });
+    if (!shared.length) return [];
+    const out = stores.map((slug) => {
+      let cost = 0, ref = 0, n = 0;
+      shared.forEach((p) => {
+        const here = p.stores.get(slug);
+        if (!here) return;
+        let best = Infinity;
+        p.stores.forEach((v) => { best = Math.min(best, v.price); });
+        cost += here.price; ref += best; n += 1;
+      });
+      return { slug, name: STORE_NAMES[slug] || slug, n, value: ref ? (cost / ref) * 100 : null };
+    }).filter((s) => s.n >= 2 && s.value);
+    return out.sort((a, b) => a.value - b.value);
+  }
+
+  /* ---------------- tooltip ---------------- */
+  const tip = $("tip");
+  function bindTip(root) {
+    root.querySelectorAll("[data-tip]").forEach((el) => {
+      el.addEventListener("mouseenter", (e) => {
+        tip.innerHTML = el.getAttribute("data-tip");
+        tip.style.opacity = "1";
+        move(e);
+      });
+      el.addEventListener("mousemove", move);
+      el.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+    });
+    function move(e) {
+      const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+      let x = e.clientX + pad, y = e.clientY + pad;
+      if (x + w > innerWidth - 8) x = e.clientX - w - pad;
+      if (y + h > innerHeight - 8) y = e.clientY - h - pad;
+      tip.style.left = Math.max(8, x) + "px";
+      tip.style.top = Math.max(8, y) + "px";
+    }
+  }
+
+  /* ---------------- charts (plain SVG, drawn to one scale) ---------------- */
+  function niceMax(v) {
+    if (v <= 0) return 1;
+    const mag = Math.pow(10, Math.floor(Math.log10(v)));
+    return Math.ceil(v / (mag / 2)) * (mag / 2);
+  }
+  function emptyState(el, title, detail) {
+    el.innerHTML = '<div class="empty"><strong>' + esc(title) + "</strong><br>" + esc(detail) + "</div>";
+  }
+
+  function columnChart(el, data, opts) {
+    const W = Math.max(el.clientWidth || 320, 260), H = opts.height || 210;
+    const padL = 6, padR = 6, padT = 26, padB = 26;
+    const inner = W - padL - padR, plotH = H - padT - padB;
+    const max = niceMax(Math.max(...data.map((d) => d.value)));
+    const step = inner / data.length, bw = Math.min(46, step * 0.62);
+    const ink = css("--ink-2"), muted = css("--muted"), line = css("--hairline-2");
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(opts.label || "") + '">';
+    for (let i = 0; i <= 2; i++) {
+      const y = padT + (plotH * i) / 2;
+      s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y + '" y2="' + y + '" stroke="' + line + '" stroke-width="1"/>';
+    }
+    data.forEach((d, i) => {
+      const h = Math.max(2, (d.value / max) * plotH);
+      const x = padL + i * step + (step - bw) / 2, y = padT + plotH - h;
+      s += '<rect class="mark" x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h +
+           '" rx="4" fill="' + (d.color || css("--accent")) + '" data-tip="' + esc(d.tip) + '"/>';
+      s += '<text x="' + (x + bw / 2) + '" y="' + (y - 7) + '" text-anchor="middle" font-size="11" font-family="' +
+           "IBM Plex Mono, monospace" + '" fill="' + ink + '">' + esc(d.valueLabel) + "</text>";
+      s += '<text x="' + (x + bw / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="' + muted + '">' + esc(d.label) + "</text>";
+    });
+    el.innerHTML = s + "</svg>";
+    bindTip(el);
+  }
+
+  function barChart(el, data, opts) {
+    const W = Math.max(el.clientWidth || 320, 260);
+    const rowH = 27, gap = 7, padT = 4;
+    const H = padT + data.length * (rowH + gap);
+    const labelW = Math.min(150, Math.max(92, W * 0.34)), valueW = 74;
+    const track = Math.max(40, W - labelW - valueW - 12);
+    const max = Math.max(...data.map((d) => d.value)) || 1;
+    const ink = css("--ink"), ink2 = css("--ink-2");
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(opts.label || "") + '">';
+    data.forEach((d, i) => {
+      const y = padT + i * (rowH + gap);
+      const w = Math.max(2, (d.value / max) * track);
+      s += '<text x="0" y="' + (y + rowH / 2 + 4) + '" font-size="12.5" fill="' + ink2 + '">' + esc(d.label) + "</text>";
+      s += '<rect class="mark" x="' + labelW + '" y="' + (y + 4) + '" width="' + w + '" height="' + (rowH - 8) +
+           '" rx="4" fill="' + (d.color || css("--accent")) + '" data-tip="' + esc(d.tip) + '"/>';
+      s += '<text x="' + (labelW + w + 8) + '" y="' + (y + rowH / 2 + 4) + '" font-size="12" font-family="IBM Plex Mono, monospace" fill="' +
+           ink + '">' + esc(d.valueLabel) + "</text>";
+    });
+    el.innerHTML = s + "</svg>";
+    bindTip(el);
+  }
+
+  function lineChart(el, points, opts) {
+    const W = Math.max(el.clientWidth || 320, 260), H = opts.height || 210;
+    const padL = 34, padR = 16, padT = 22, padB = 26;
+    const inner = W - padL - padR, plotH = H - padT - padB;
+    const values = points.map((p) => p.value);
+    const lo = Math.min(...values, 100), hi = Math.max(...values, 100);
+    const span = Math.max(hi - lo, 4), min = lo - span * 0.25, max = hi + span * 0.25;
+    const x = (i) => padL + (points.length === 1 ? inner / 2 : (inner * i) / (points.length - 1));
+    const y = (v) => padT + plotH - ((v - min) / (max - min)) * plotH;
+    const accent = css("--accent"), muted = css("--muted"), line = css("--hairline-2"), surface = css("--surface");
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(opts.label || "") + '">';
+    [min, (min + max) / 2, max].forEach((v) => {
+      s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="' + line + '" stroke-width="1"/>';
+      s += '<text x="' + (padL - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="' +
+           muted + '">' + v.toFixed(1) + "</text>";
+    });
+    // The 100 baseline, labelled on the right so it never collides with the axis ticks.
+    s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(100) + '" y2="' + y(100) +
+         '" stroke="' + muted + '" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>';
+    s += '<text x="' + (W - padR) + '" y="' + (y(100) - 5) + '" text-anchor="end" font-size="10" fill="' + muted + '">100</text>';
+    const d = points.map((p, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(p.value).toFixed(1)).join(" ");
+    const area = d + " L" + x(points.length - 1).toFixed(1) + " " + (padT + plotH) + " L" + x(0).toFixed(1) + " " + (padT + plotH) + " Z";
+    s += '<path d="' + area + '" fill="' + accent + '" opacity="0.08"/>';
+    s += '<path d="' + d + '" fill="none" stroke="' + accent + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+    points.forEach((p, i) => {
+      const last = i === points.length - 1;
+      s += '<circle class="mark" cx="' + x(i) + '" cy="' + y(p.value) + '" r="' + (last ? 5.5 : 4) + '" fill="' + (last ? accent : surface) +
+           '" stroke="' + accent + '" stroke-width="2" data-tip="' + esc(p.tip) + '"/>';
+      s += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="' + muted + '">' + esc(p.label) + "</text>";
+    });
+    const lastP = points[points.length - 1];
+    s += '<text x="' + (x(points.length - 1)) + '" y="' + (y(lastP.value) - 12) + '" text-anchor="end" font-size="11.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="' +
+         accent + '">' + lastP.value.toFixed(1) + "</text>";
+    el.innerHTML = s + "</svg>";
+    bindTip(el);
+  }
+
+  /* ---------------- render ---------------- */
+  function render() {
+    const rows = visibleRows();
+    const receipts = visibleReceipts(rows);
+    const book = priceBook(rows);
+    const spend = sum(rows, (r) => r.total);
+    const over = overpay(rows, book);
+
+    $("demo-band").hidden = !state.demo || !DATA.meta.demo_receipts;
+    $("demo-band-text").textContent =
+      DATA.meta.demo_receipts + " synthetic receipts from scripts/make_demo_data.py are mixed in so the comparisons have history. " +
+      "Real scanned receipts: " + DATA.meta.real_receipts + ". Untick to see only your own.";
+    $("range-tick").textContent = receipts.length
+      ? receipts[receipts.length - 1].date + " → " + receipts[0].date
+      : "no receipts in view";
+    $("built").textContent = DATA.meta.generated_at ? "Built " + DATA.meta.generated_at.replace("T", " ").slice(0, 16) + "." : "";
+
+    /* KPIs */
+    const vat = sum(receipts, (r) => r.vat_amount || 0);
+    const avg = receipts.length ? spend / receipts.length : 0;
+    const tracked = [...book.values()].filter((p) => p.stores.size >= 2).length;
+    $("kpis").innerHTML = [
+      kpi("Total spend", money(spend), receipts.length + " receipt" + (receipts.length === 1 ? "" : "s") + " · " + rows.length + " lines"),
+      kpi("Average basket", money(avg), receipts.length ? "across " + new Set(receipts.map((r) => r.merchant_slug)).size + " store(s)" : "—"),
+      kpi("Overpaid vs cheapest", money(over.lost), tracked ? tracked + " products priced at 2+ stores" : "needs the same product at 2 stores", over.lost > 0.5),
+      kpi("VAT paid", money(vat), "18% where charged"),
+      kpi("Most expensive line", rows.length ? money(Math.max(...rows.map((r) => r.total))) : "—", rows.length ? topLineName(rows) : "—"),
+    ].join("");
+
+    /* Spend by month */
+    const byMonth = [...groupBy(rows, (r) => r.month).entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    const mEl = $("c-months");
+    if (!byMonth.length) emptyState(mEl, "Nothing in range", "Widen the period or clear the filters.");
+    else {
+      $("spend-hint").textContent = byMonth.length + " month" + (byMonth.length === 1 ? "" : "s");
+      columnChart(mEl, byMonth.map(([m, rs]) => ({
+        label: monthLabel(m),
+        value: sum(rs, (r) => r.total),
+        valueLabel: money0(sum(rs, (r) => r.total)),
+        tip: "<div class='t-title'>" + monthLabel(m) + "</div><div class='t-row'>" + money(sum(rs, (r) => r.total)) + " · " +
+             new Set(rs.map((r) => r.receipt_id)).size + " receipts · " + rs.length + " lines</div>",
+      })), { label: "Spend by month" });
+    }
+
+    /* Categories — one accent hue; the axis labels carry identity, so no colour cycling */
+    const cats = [...groupBy(rows, (r) => r.category).entries()]
+      .map(([c, rs]) => ({ c, v: sum(rs, (x) => x.total), n: rs.length }))
+      .sort((a, b) => b.v - a.v);
+    const catEl = $("c-cats");
+    if (!cats.length) emptyState(catEl, "Nothing in range", "Widen the period or clear the filters.");
+    else {
+      const top = cats.slice(0, 7);
+      const rest = cats.slice(7);
+      if (rest.length) top.push({ c: "__other", v: sum(rest, (x) => x.v), n: sum(rest, (x) => x.n) });
+      $("cat-hint").textContent = cats.length + " categories";
+      barChart(catEl, top.map((d) => ({
+        label: d.c === "__other" ? rest.length + " smaller categories" : DATA.meta.category_labels[d.c] || d.c,
+        value: d.v,
+        valueLabel: money0(d.v),
+        tip: "<div class='t-title'>" + esc(d.c === "__other" ? "Other categories" : DATA.meta.category_labels[d.c] || d.c) +
+             "</div><div class='t-row'>" + money(d.v) + " · " + (spend ? ((d.v / spend) * 100).toFixed(1) : 0) + "% · " + d.n + " lines</div>",
+      })), { label: "Spend by category" });
+    }
+
+    /* Basket index */
+    const idx = basketIndex(rows);
+    const idxEl = $("c-index");
+    if (idx.length < 2) {
+      emptyState(idxEl, "Not enough history yet", "Needs the same product bought in two different months. Scan next month's receipt and this fills in.");
+    } else {
+      lineChart(idxEl, idx.map((p) => ({
+        label: monthLabel(p.month),
+        value: p.value,
+        tip: "<div class='t-title'>" + monthLabel(p.month) + "</div><div class='t-row'>index " + p.value.toFixed(1) +
+             " · " + (p.value >= 100 ? "+" : "") + (p.value - 100).toFixed(1) + "% vs " + monthLabel(idx[0].month) +
+             "</div><div class='t-row'>" + p.covered + " of " + p.total + " tracked products repriced</div>",
+      })), { label: "Basket price index" });
+    }
+
+    /* Store level */
+    const levels = storeLevels(rows, book);
+    const lvEl = $("c-stores");
+    if (!levels.length) {
+      emptyState(lvEl, "Needs two stores", "Buy the same product at a second store and this ranks them for you.");
+    } else {
+      barChart(lvEl, levels.map((s) => ({
+        label: s.name,
+        value: s.value,
+        valueLabel: s.value.toFixed(1),
+        color: storeColor(s.slug),
+        tip: "<div class='t-title'>" + esc(s.name) + "</div><div class='t-row'>" + s.value.toFixed(1) + " vs cheapest (100)</div>" +
+             "<div class='t-row'>on " + s.n + " shared products</div>",
+      })), { label: "Store price level" });
+      lvEl.insertAdjacentHTML("beforeend", '<div class="legend">' + levels.map((s) =>
+        '<span class="chip"><span class="dot" style="background:' + storeColor(s.slug) + '"></span>' + esc(s.name) + "</span>").join("") + "</div>");
+    }
+
+    renderCompare(book, over.per);
+    renderMovers(rows);
+    renderReceipts(receipts);
+    renderLines(rows, book);
+  }
+
+  function topLineName(rows) {
+    const r = rows.reduce((a, b) => (b.total > a.total ? b : a));
+    return (r.name_en || r.name) + " · " + r.merchant_name;
+  }
+  function kpi(label, value, note, flagged) {
+    return '<div class="kpi' + (flagged ? " flagged" : "") + '"><div class="k-label">' + esc(label) +
+      '</div><div class="k-value">' + esc(value) + '</div><div class="k-note">' + esc(note) + "</div></div>";
+  }
+
+  function renderCompare(book, perProduct) {
+    const el = $("t-compare");
+    const stores = [...new Set([].concat(...[...book.values()].map((p) => [...p.stores.keys()])))].sort();
+    const shared = [...book.values()].filter((p) => p.stores.size >= 2);
+    $("cmp-hint").textContent = shared.length ? shared.length + " products" : "";
+    if (!shared.length) {
+      emptyState(el, "No overlap yet", "This table compares a product's price between stores — it needs the same barcode on receipts from two different shops.");
+      return;
+    }
+    shared.sort((a, b) => (perProduct.get(b.key) || 0) - (perProduct.get(a.key) || 0) || spreadOf(b) - spreadOf(a));
+    let h = '<div class="scroll"><table><thead><tr><th>Product</th>' +
+      stores.map((s) => '<th class="n"><span class="chip"><span class="dot" style="background:' + storeColor(s) + '"></span>' + esc(STORE_NAMES[s] || s) + "</span></th>").join("") +
+      '<th class="n">Spread</th><th class="n">Costing you</th></tr></thead><tbody>';
+    shared.slice(0, 18).forEach((p) => {
+      let best = Infinity;
+      p.stores.forEach((v) => { best = Math.min(best, v.price); });
+      let worst = 0;
+      p.stores.forEach((v) => { worst = Math.max(worst, v.price); });
+      h += "<tr><td class='name'><span dir='auto'>" + esc(p.name) + "</span><br><span class='sec'>" + esc(p.name_en || "") + "</span></td>";
+      stores.forEach((s) => {
+        const v = p.stores.get(s);
+        h += '<td class="n">' + (v ? '<span class="' + (v.price === best ? "best" : "") + '">' + money(v.price) + BASE_UNIT[p.unit] + "</span>" : '<span class="sec">—</span>') + "</td>";
+      });
+      h += '<td class="n">' + (best ? "+" + (((worst - best) / best) * 100).toFixed(0) + "%" : "—") + "</td>";
+      const lost = perProduct.get(p.key) || 0;
+      h += '<td class="n">' + (lost > 0.01 ? '<span class="delta-up">' + money(lost) + "</span>" : '<span class="sec">—</span>') + "</td></tr>";
+    });
+    el.innerHTML = h + "</tbody></table></div>";
+  }
+  function spreadOf(p) {
+    let best = Infinity, worst = 0;
+    p.stores.forEach((v) => { best = Math.min(best, v.price); worst = Math.max(worst, v.price); });
+    return best ? (worst - best) / best : 0;
+  }
+
+  function renderMovers(rows) {
+    const el = $("t-movers");
+    const movers = [];
+    // Same product, same store — otherwise a cheaper shop looks like a price cut.
+    groupBy(rows, (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
+      const sorted = [...rs].sort((a, b) => a.date.localeCompare(b.date));
+      const first = sorted[0], last = sorted[sorted.length - 1];
+      if (first.date === last.date || !first.base_price) return;
+      const change = ((last.base_price - first.base_price) / first.base_price) * 100;
+      if (Math.abs(change) < 0.5) return;
+      movers.push({ first, last, change });
+    });
+    if (!movers.length) {
+      emptyState(el, "No repeat purchases yet", "Once you buy the same product twice at the same store, its price move shows up here.");
+      return;
+    }
+    movers.sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
+    let h = '<div class="scroll"><table><thead><tr><th>Product</th><th class="n">First</th><th class="n">Latest</th><th class="n">Change</th></tr></thead><tbody>';
+    movers.slice(0, 10).forEach((m) => {
+      const up = m.change > 0, u = BASE_UNIT[m.first.base_unit];
+      h += "<tr><td class='name'><span dir='auto'>" + esc(m.first.name) + "</span><br><span class='sec'>" +
+        "<span class='dot' style='display:inline-block;background:" + storeColor(m.first.merchant_slug) + "'></span> " +
+        esc(m.first.merchant_name) + " · " + esc(m.first.date) + " → " + esc(m.last.date) + "</span></td>" +
+        '<td class="n">' + money(m.first.base_price) + u + "</td>" +
+        '<td class="n">' + money(m.last.base_price) + u + "</td>" +
+        '<td class="n ' + (up ? "delta-up" : "delta-down") + '">' + (up ? "\u25B2" : "\u25BC") + " " + pct(m.change) + "</td></tr>";
+    });
+    el.innerHTML = h + "</tbody></table></div>";
+  }
+
+  function renderReceipts(receipts) {
+    const el = $("t-receipts");
+    $("rec-hint").textContent = receipts.length + " in view";
+    if (!receipts.length) { emptyState(el, "No receipts in range", "Clear a filter to see them."); return; }
+    let h = '<div class="scroll"><table><thead><tr><th>Date</th><th>Store</th><th class="n">Items</th><th class="n">Total</th></tr></thead><tbody>';
+    [...receipts].reverse().forEach((r) => {
+      h += "<tr><td>" + esc(r.date) + (r.demo ? ' <span class="tag">demo</span>' : "") + "</td>" +
+        "<td><span class='chip'><span class='dot' style='background:" + storeColor(r.merchant_slug) + "'></span><span dir='auto'>" + esc(r.merchant_name) + "</span></span></td>" +
+        '<td class="n">' + r.items_count + "</td>" +
+        '<td class="n">' + money(r.total) + "</td></tr>";
+    });
+    el.innerHTML = h + "</tbody></table></div>";
+  }
+
+  const LINE_COLS = [
+    { key: "date", label: "Date" },
+    { key: "name", label: "Item" },
+    { key: "merchant_name", label: "Store" },
+    { key: "category", label: "Category" },
+    { key: "quantity", label: "Qty", n: true },
+    { key: "unit_price", label: "Unit price", n: true },
+    { key: "base_price", label: "Per kg / L / ea", n: true },
+    { key: "total", label: "Paid", n: true },
+  ];
+  function renderLines(rows, book) {
+    const el = $("t-lines");
+    $("lines-hint").textContent = rows.length + " lines";
+    if (!rows.length) { emptyState(el, "No lines match", "Clear the search or widen the period."); return; }
+    const { key, dir } = state.sortLines;
+    const sorted = [...rows].sort((a, b) => {
+      const x = a[key], y = b[key];
+      return (typeof x === "number" ? x - y : String(x).localeCompare(String(y), "he")) * dir;
+    });
+    let h = '<div class="scroll"><table><thead><tr>' + LINE_COLS.map((c) =>
+      '<th role="button" tabindex="0" data-key="' + c.key + '" class="' + (c.n ? "n" : "") + '">' + esc(c.label) +
+      (key === c.key ? (dir === 1 ? " ▲" : " ▼") : "") + "</th>").join("") + "</tr></thead><tbody>";
+    sorted.slice(0, 250).forEach((r) => {
+      const flagged = r.confidence != null && r.confidence < 0.8;
+      h += '<tr class="' + (flagged ? "flagrow" : "") + '">' +
+        "<td>" + esc(r.date) + (r.demo ? ' <span class="tag">demo</span>' : "") + "</td>" +
+        "<td class='name'><span dir='auto'>" + esc(r.name) + "</span>" + (r.name_en ? "<br><span class='sec'>" + esc(r.name_en) + "</span>" : "") +
+        (flagged ? '<br><span class="sec">⚑ low confidence — check the paper receipt</span>' : "") + "</td>" +
+        "<td><span class='chip'><span class='dot' style='background:" + storeColor(r.merchant_slug) + "'></span><span dir='auto'>" + esc(r.merchant_name) + "</span></span></td>" +
+        "<td class='sec'>" + esc(DATA.meta.category_labels[r.category] || r.category) + "</td>" +
+        '<td class="n">' + r.quantity + (r.unit === "kg" ? " kg" : "") + "</td>" +
+        '<td class="n">' + money(r.unit_price) + "</td>" +
+        '<td class="n">' + money(r.base_price) + BASE_UNIT[r.base_unit] + "</td>" +
+        '<td class="n">' + money(r.total) + "</td></tr>";
+    });
+    h += "</tbody></table></div>";
+    if (sorted.length > 250) h += '<p class="sec" style="margin-top:10px">Showing the first 250 of ' + sorted.length + " lines — search to narrow.</p>";
+    el.innerHTML = h;
+    el.querySelectorAll("th[role=button]").forEach((th) => {
+      const go = () => {
+        const k = th.dataset.key;
+        state.sortLines = { key: k, dir: state.sortLines.key === k ? -state.sortLines.dir : -1 };
+        renderLines(rows, book);
+      };
+      th.addEventListener("click", go);
+      th.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    });
+  }
+
+  /* ---------------- controls ---------------- */
+  function option(v, label, sel) { return '<option value="' + esc(v) + '"' + (sel ? " selected" : "") + ">" + esc(label) + "</option>"; }
+  function buildControls() {
+    $("f-period").innerHTML = [option("all", "All time", true), option("3", "Last 3 months"), option("6", "Last 6 months"), option("12", "Last 12 months")].join("");
+    const stores = [...new Set(DATA.rows.map((r) => r.merchant_slug))].sort();
+    $("f-store").innerHTML = option("all", "All stores", true) + stores.map((s) => option(s, STORE_NAMES[s] || s)).join("");
+    const cats = [...new Set(DATA.rows.map((r) => r.category))].sort();
+    $("f-cat").innerHTML = option("all", "All categories", true) + cats.map((c) => option(c, DATA.meta.category_labels[c] || c)).join("");
+    $("f-demo").checked = state.demo;
+    if (!DATA.meta.demo_receipts) $("f-demo").closest("label").hidden = true;
+
+    $("f-demo").addEventListener("change", (e) => { state.demo = e.target.checked; render(); });
+    $("f-period").addEventListener("change", (e) => { state.period = e.target.value; render(); });
+    $("f-store").addEventListener("change", (e) => { state.store = e.target.value; render(); });
+    $("f-cat").addEventListener("change", (e) => { state.cat = e.target.value; render(); });
+    let t;
+    $("f-q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; render(); }, 140); });
+  }
+
+  buildControls();
+  render();
+  let rt;
+  addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 160); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+})();
+</script>

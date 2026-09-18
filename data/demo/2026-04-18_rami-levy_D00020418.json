@@ -1,0 +1,225 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "2026-04-18_rami-levy_D00020418",
+  "demo": true,
+  "source_image": null,
+  "scanned_at": "2026-04-18T19:27:00",
+  "merchant": {
+    "name": "רמי לוי שיווק השקמה",
+    "name_en": "Rami Levy",
+    "slug": "rami-levy",
+    "branch": "נתניה",
+    "tax_id": "512534303",
+    "phone": null,
+    "address": null
+  },
+  "document": {
+    "type": "invoice_receipt",
+    "number": "D00020418",
+    "is_copy": false,
+    "register": "1"
+  },
+  "purchased_at": "2026-04-18T19:27",
+  "currency": "ILS",
+  "items": [
+    {
+      "line": 1,
+      "barcode": "7290000066318",
+      "name": "ביצים L תבנית 12",
+      "name_en": "Eggs L, tray of 12",
+      "category": "dairy_eggs",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 13.82,
+      "total": 13.82,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 2,
+      "barcode": "7290000119946",
+      "name": "במבה אסם 80 גרם",
+      "name_en": "Bamba 80g",
+      "category": "snacks_sweets",
+      "quantity": 2.0,
+      "unit": "each",
+      "unit_price": 4.08,
+      "total": 8.16,
+      "size": {
+        "value": 80,
+        "unit": "g"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 3,
+      "barcode": "7290019049920",
+      "name": "קולה זירו 1.5 ליטר",
+      "name_en": "Cola Zero 1.5L",
+      "category": "beverages",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 7.16,
+      "total": 7.16,
+      "size": {
+        "value": 1.5,
+        "unit": "l"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 4,
+      "barcode": "7290103992873",
+      "name": "נייר טואלט 32 גליל",
+      "name_en": "Toilet paper, 32 rolls",
+      "category": "household",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 42.57,
+      "total": 42.57,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 5,
+      "barcode": "7290008757775",
+      "name": "שניצל עוף טרי",
+      "name_en": "Fresh chicken schnitzel",
+      "category": "meat_fish",
+      "quantity": 0.901,
+      "unit": "kg",
+      "unit_price": 38.01,
+      "total": 34.25,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 6,
+      "barcode": "7290102393916",
+      "name": "אורז בסמטי 1 ק\"ג",
+      "name_en": "Basmati rice 1kg",
+      "category": "pantry",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 12.45,
+      "total": 12.45,
+      "size": {
+        "value": 1,
+        "unit": "kg"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 7,
+      "barcode": "14210",
+      "name": "עגבניות",
+      "name_en": "Tomatoes",
+      "category": "produce",
+      "quantity": 1.227,
+      "unit": "kg",
+      "unit_price": 5.21,
+      "total": 6.39,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 8,
+      "barcode": "4066600999614",
+      "name": "פאולנר בקבוק זכ' 500 מ\"ל",
+      "name_en": "Paulaner bottle 500ml",
+      "category": "alcohol",
+      "quantity": 1.0,
+      "unit": "each",
+      "unit_price": 10.73,
+      "total": 10.73,
+      "size": {
+        "value": 500,
+        "unit": "ml"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 9,
+      "barcode": "14201",
+      "name": "מלפפון",
+      "name_en": "Cucumber",
+      "category": "produce",
+      "quantity": 0.704,
+      "unit": "kg",
+      "unit_price": 6.23,
+      "total": 4.39,
+      "size": null,
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "line": 10,
+      "barcode": "7290013558718",
+      "name": "פטריות שמפניון א.א 300",
+      "name_en": "Champignon mushrooms 300g",
+      "category": "produce",
+      "quantity": 2.0,
+      "unit": "each",
+      "unit_price": 8.32,
+      "total": 16.64,
+      "size": {
+        "value": 300,
+        "unit": "g"
+      },
+      "discount": null,
+      "vat_exempt": false,
+      "confidence": 0.95,
+      "notes": null
+    }
+  ],
+  "totals": {
+    "items_count": 10,
+    "subtotal": 156.56,
+    "discount_total": 0,
+    "total": 156.56,
+    "vat_rate": 0.18,
+    "vat_amount": 23.88,
+    "vat_taxable": 132.68,
+    "vat_exempt": 0
+  },
+  "payment": {
+    "method": "credit",
+    "amount": 156.56,
+    "change": 0,
+    "card_brand": "ויזה כאל",
+    "card_last4": "7462",
+    "terminal": "2656917",
+    "auth_code": null
+  },
+  "review": {
+    "overall_confidence": 1.0,
+    "needs_human_check": [],
+    "notes": "Synthetic demo receipt generated by scripts/make_demo_data.py — not a real purchase."
+  }
+}

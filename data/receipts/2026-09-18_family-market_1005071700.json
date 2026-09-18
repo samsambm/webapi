@@ -1,0 +1,168 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "2026-09-18_family-market_1005071700",
+  "demo": false,
+  "source_image": "data/images/2026-09-18_family-market_1005071700.jpg",
+  "scanned_at": "2026-09-18T09:00:00",
+  "merchant": {
+    "name": "י.א. פמילי מרקט בע\"מ",
+    "name_en": "Y.A. Family Market Ltd",
+    "slug": "family-market",
+    "branch": "ניצני עוז",
+    "tax_id": "515847747",
+    "phone": "0546619981",
+    "address": "אזור תעשייה ניצני עוז"
+  },
+  "document": {
+    "type": "invoice_receipt",
+    "number": "1005071700",
+    "is_copy": true,
+    "register": "20000"
+  },
+  "purchased_at": "2026-09-18T11:44:00",
+  "currency": "ILS",
+  "items": [
+    {
+      "line": 1, "barcode": "7290108359213",
+      "name": "סוכר ג'מבו 18-36", "name_en": "Sugar, jumbo pack",
+      "category": "pantry", "quantity": 1, "unit": "each",
+      "unit_price": 39.90, "total": 39.90, "size": null,
+      "vat_exempt": false, "confidence": 0.62,
+      "notes": "Printed name partly creased on the photo — verify against the paper receipt."
+    },
+    {
+      "line": 2, "barcode": "14033",
+      "name": "בצל יבש ישראל", "name_en": "Dry onion, Israel",
+      "category": "produce", "quantity": 0.321, "unit": "kg",
+      "unit_price": 6.90, "total": 2.21, "size": null,
+      "vat_exempt": false, "confidence": 0.97, "notes": null
+    },
+    {
+      "line": 3, "barcode": "7290013558718",
+      "name": "פטריות שמפניון א.א 300", "name_en": "Champignon mushrooms 300g",
+      "category": "produce", "quantity": 1, "unit": "each",
+      "unit_price": 11.90, "total": 11.90,
+      "size": { "value": 300, "unit": "g" },
+      "vat_exempt": false, "confidence": 0.95, "notes": null
+    },
+    {
+      "line": 4, "barcode": "7290000554532",
+      "name": "צפתית מעודנת 5%", "name_en": "Tzfatit cheese, light 5%",
+      "category": "dairy_eggs", "quantity": 1, "unit": "each",
+      "unit_price": 18.90, "total": 18.90, "size": null,
+      "vat_exempt": false, "confidence": 0.78, "notes": null
+    },
+    {
+      "line": 5, "barcode": "7290011462000",
+      "name": "חומוס ביתי /מטבחה/ירושל", "name_en": "Home-style hummus",
+      "category": "deli_prepared", "quantity": 1, "unit": "each",
+      "unit_price": 12.90, "total": 12.90, "size": null,
+      "vat_exempt": false, "confidence": 0.9, "notes": null
+    },
+    {
+      "line": 6, "barcode": "100103",
+      "name": "בגט", "name_en": "Baguette",
+      "category": "bakery", "quantity": 1, "unit": "each",
+      "unit_price": 5.90, "total": 5.90, "size": null,
+      "vat_exempt": false, "confidence": 0.98, "notes": null
+    },
+    {
+      "line": 7, "barcode": "7290002321750",
+      "name": "פילה אמנון 5-7 בד\"ץ", "name_en": "Tilapia fillet 5-7, Badatz",
+      "category": "meat_fish", "quantity": 0.391, "unit": "kg",
+      "unit_price": 29.90, "total": 11.69, "size": null,
+      "vat_exempt": false, "confidence": 0.95, "notes": null
+    },
+    {
+      "line": 8, "barcode": "122269",
+      "name": "קבב הבית", "name_en": "House kebab",
+      "category": "meat_fish", "quantity": 1.22, "unit": "kg",
+      "unit_price": 64.90, "total": 79.18, "size": null,
+      "vat_exempt": false, "confidence": 0.96, "notes": "Most expensive line on this receipt."
+    },
+    {
+      "line": 9, "barcode": "7290112498915",
+      "name": "מאגדת מיני מגנום שקדים", "name_en": "Mini Magnum almond multipack",
+      "category": "frozen", "quantity": 1, "unit": "each",
+      "unit_price": 34.90, "total": 34.90, "size": null,
+      "vat_exempt": false, "confidence": 0.93, "notes": null
+    },
+    {
+      "line": 10, "barcode": "7290000537566",
+      "name": "נקניקיות עוף 400 גרם", "name_en": "Chicken sausages 400g",
+      "category": "meat_fish", "quantity": 1, "unit": "each",
+      "unit_price": 15.90, "total": 15.90,
+      "size": { "value": 400, "unit": "g" },
+      "vat_exempt": false, "confidence": 0.96, "notes": null
+    },
+    {
+      "line": 11, "barcode": "654959",
+      "name": "עמק תנובה ישראל", "name_en": "Emek cheese, Tnuva",
+      "category": "dairy_eggs", "quantity": 0.314, "unit": "kg",
+      "unit_price": 52.85, "total": 16.59, "size": null,
+      "vat_exempt": false, "confidence": 0.94, "notes": null
+    },
+    {
+      "line": 12, "barcode": "222001",
+      "name": "גרעינים שחורים עם/בלי מ", "name_en": "Black sunflower seeds",
+      "category": "snacks_sweets", "quantity": 0.346, "unit": "kg",
+      "unit_price": 34.90, "total": 12.08, "size": null,
+      "vat_exempt": false, "confidence": 0.88, "notes": null
+    },
+    {
+      "line": 13, "barcode": "8888801",
+      "name": "כללי", "name_en": "General / miscellaneous",
+      "category": "other", "quantity": 1, "unit": "each",
+      "unit_price": 9.00, "total": 9.00, "size": null,
+      "vat_exempt": null, "confidence": 0.9,
+      "notes": "Generic register key — the receipt does not say what was bought."
+    },
+    {
+      "line": 14, "barcode": "4066600999614",
+      "name": "פאולנר בקבוק זכ' 500 מ\"ל", "name_en": "Paulaner bottle 500ml",
+      "category": "alcohol", "quantity": 1, "unit": "each",
+      "unit_price": 12.90, "total": 12.90,
+      "size": { "value": 500, "unit": "ml" },
+      "vat_exempt": false, "confidence": 0.94, "notes": null
+    },
+    {
+      "line": 15, "barcode": "4066600999614",
+      "name": "פאולנר בקבוק זכ' 500 מ\"ל", "name_en": "Paulaner bottle 500ml",
+      "category": "alcohol", "quantity": 1, "unit": "each",
+      "unit_price": 12.90, "total": 12.90,
+      "size": { "value": 500, "unit": "ml" },
+      "vat_exempt": false, "confidence": 0.94, "notes": null
+    },
+    {
+      "line": 16, "barcode": "80432402931",
+      "name": "שיבס ריגל", "name_en": "Chivas Regal",
+      "category": "alcohol", "quantity": 1, "unit": "each",
+      "unit_price": 129.90, "total": 129.90, "size": null,
+      "vat_exempt": false, "confidence": 0.92, "notes": null
+    }
+  ],
+  "totals": {
+    "items_count": 16,
+    "subtotal": 426.75,
+    "discount_total": 0,
+    "total": 426.75,
+    "vat_rate": 0.18,
+    "vat_amount": 62.95,
+    "vat_taxable": 349.69,
+    "vat_exempt": 14.11
+  },
+  "payment": {
+    "method": "credit",
+    "amount": 426.75,
+    "change": 0,
+    "card_brand": "ויזה כאל",
+    "card_last4": "7462",
+    "terminal": "2656917",
+    "auth_code": "869573"
+  },
+  "review": {
+    "overall_confidence": 0.93,
+    "needs_human_check": ["items[0].name"],
+    "notes": "Line totals sum to 426.75 and match the printed total. VAT split is as printed (18%)."
+  }
+}
