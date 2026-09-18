@@ -564,8 +564,10 @@
       scan_dup: "A receipt with this number is already saved. Saving overwrites it.",
       engine_sample: "via Claude in this page", engine_native: "via your API key",
       engine_cloud: "via your account", engine_none: "not set up",
-      noimg_t: "This view cannot send photos",
-      noimg_d: "Claude is reachable here, but this viewer will not pass an image to it. Open the artifact in the Claude app, install the Android app, or add your own API key below — any of the three makes scanning work.",
+      noimg_t: "This view will not pass a photo to Claude",
+      noimg_d: "Text works here, photos do not — it is the viewer, not the receipt. Opening this same link in the Claude app usually fixes it and costs nothing beyond your subscription. Otherwise paste an API key here, or try anyway if you think this view can manage it.",
+      noimg_confirmed: "This viewer really will not send the photo. Open the link in the Claude app, or paste an API key.",
+      try_anyway: "Try anyway",
       blocked_t: "Scanning needs Claude", 
       blocked_d: "In this app, add your own Anthropic API key below and scanning works. Opened as a published artifact instead, it runs on your Claude account with no key at all.",
       settings_title: "Settings — Anthropic API key",
@@ -670,8 +672,10 @@
       scan_dup: "כבר שמורה חשבונית עם המספר הזה. שמירה תדרוס אותה.",
       engine_sample: "דרך קלוד בדף הזה", engine_native: "דרך מפתח ה-API שלך",
       engine_cloud: "דרך החשבון שלך", engine_none: "לא מוגדר",
-      noimg_t: "התצוגה הזו לא יכולה לשלוח תמונות",
-      noimg_d: "קלוד זמין כאן, אבל התצוגה הזו לא מעבירה אליו תמונה. פתח את הארטיפקט באפליקציית קלוד, התקן את אפליקציית האנדרואיד, או הוסף מפתח API משלך למטה — כל אחד מהשלושה יפעיל את הסריקה.",
+      noimg_t: "התצוגה הזו לא מעבירה תמונה לקלוד",
+      noimg_d: "טקסט עובד כאן, תמונות לא — זו התצוגה, לא החשבונית. פתיחת אותו קישור באפליקציית קלוד בדרך כלל פותרת את זה ולא עולה מעבר למנוי שלך. אחרת אפשר להדביק כאן מפתח API, או פשוט לנסות בכל זאת.",
+      noimg_confirmed: "התצוגה הזו באמת לא שולחת את התמונה. פתח את הקישור באפליקציית קלוד, או הדבק מפתח API.",
+      try_anyway: "נסה בכל זאת",
       blocked_t: "לסריקה נדרש קלוד",
       blocked_d: "באפליקציה הזו — הוסף מפתח Anthropic API למטה והסריקה תעבוד. בארטיפקט המפורסם היא רצה על חשבון הקלוד שלך בלי מפתח בכלל.",
       settings_title: "הגדרות — מפתח Anthropic API",
@@ -876,8 +880,9 @@
     /* A viewer can be able to ask Claude but not to send it a photo — the
        artifact runtime reports that separately, and a mobile browser view is
        exactly the case. Gate the two screens on the right one. */
+    forceImages: false,
     imageMode() {
-      if (this.sample && this.imageLimits) return "sample";
+      if (this.sample && (this.imageLimits || this.forceImages)) return "sample";
       return this.hasKey() ? "key" : "none";
     },
     textMode() { return this.sample ? "sample" : (this.hasKey() ? "key" : "none"); },
@@ -1750,9 +1755,11 @@
         return;
       }
       status(statusEl, "", false);
+      const imageless = e && (e.code === "images_unavailable" || /image input is not available/i.test(String(e.message || "")));
       $("scan-result").innerHTML = '<div class="notice notice-bad">' +
-        esc(t("scan_failed", { m: (e && (e.message || e.code)) || "error" })) + "</div>";
+        esc(imageless ? t("noimg_confirmed") : t("scan_failed", { m: (e && (e.message || e.code)) || "error" })) + "</div>";
       $("scan-actions").innerHTML = "";
+      if (imageless) { AI.forceImages = false; $("scan-stage").hidden = true; paintEngine(); }
     }
   }
   function normaliseScan(p) {
@@ -2005,12 +2012,26 @@
     $("scan-ui").hidden = !canScan;
     $("scan-blocked").hidden = canScan;
     if (!canScan) {
-      // Say which of the two cases this is: no route to Claude at all, or a
-      // view that can talk to Claude but cannot hand it a photo.
+      // Two different cases, and in both the panel has to offer a way out
+      // rather than just name the problem.
       const noImages = !!AI.sample && !AI.imageLimits;
       $("scan-blocked").innerHTML = EMPTY_ICON +
-        "<strong>" + esc(t(noImages ? "noimg_t" : "blocked_t")) + "</strong><span>" +
-        esc(t(noImages ? "noimg_d" : "blocked_d")) + "</span>";
+        "<strong>" + esc(t(noImages ? "noimg_t" : "blocked_t")) + "</strong>" +
+        "<span>" + esc(t(noImages ? "noimg_d" : "blocked_d")) + "</span>" +
+        '<div class="key-row" style="margin-top:16px; justify-content:center">' +
+        '<input type="password" id="quick-key" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">' +
+        '<button type="button" class="btn btn-primary" id="quick-save">' + esc(t("key_save")) + "</button>" +
+        (noImages ? '<button type="button" class="btn" id="quick-try">' + esc(t("try_anyway")) + "</button>" : "") +
+        "</div>";
+      const save = $("quick-save");
+      if (save) save.onclick = () => {
+        const v = $("quick-key").value.trim();
+        if (v && !/^sk-ant-/.test(v)) { $("quick-key").value = ""; $("quick-key").placeholder = t("key_bad"); return; }
+        store.set("apikey", v);
+        paintEngine();
+      };
+      const tryIt = $("quick-try");
+      if (tryIt) tryIt.onclick = () => { AI.forceImages = true; paintEngine(); };
     }
 
     const canAsk = textMode !== "none";
