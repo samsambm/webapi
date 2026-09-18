@@ -3,7 +3,6 @@
 
     python3 scripts/build_dashboard.py            # validate + build
     python3 scripts/build_dashboard.py --check     # validate only, no write
-    python3 scripts/build_dashboard.py --no-demo   # exclude data/demo/ entirely
 
 Writes dashboard/index.html (open it in a browser) and dashboard/artifact.html
 (the same page as a body fragment, for publishing as a Claude Artifact).
@@ -50,7 +49,6 @@ def build_payload(loaded: rc.LoadResult) -> dict:
         totals = r.get("totals", {})
         cards.append({
             "receipt_id": r.get("receipt_id"),
-            "demo": bool(r.get("demo")),
             "date": r.get("purchased_at", "")[:10],
             "merchant_slug": r.get("merchant", {}).get("slug", "unknown"),
             "merchant_name": r.get("merchant", {}).get("name", "Unknown"),
@@ -59,7 +57,6 @@ def build_payload(loaded: rc.LoadResult) -> dict:
             "vat_amount": rc.money(totals.get("vat_amount") or 0),
         })
     cards.sort(key=lambda c: c["date"], reverse=True)
-    real = [r for r in loaded.receipts if not r.get("demo")]
     return {
         "rows": rows,
         "receipts": cards,
@@ -68,8 +65,7 @@ def build_payload(loaded: rc.LoadResult) -> dict:
             "currency": (loaded.receipts[0].get("currency") if loaded.receipts else "ILS"),
             "category_labels": rc.CATEGORY_LABELS,
             "category_labels_he": rc.CATEGORY_LABELS_HE,
-            "real_receipts": len(real),
-            "demo_receipts": len(loaded.receipts) - len(real),
+            "receipt_count": len(loaded.receipts),
             "last_date": max((c["date"] for c in cards), default=""),
         },
     }
@@ -89,11 +85,10 @@ def render(payload: dict) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="validate only, do not write the dashboard")
-    ap.add_argument("--no-demo", action="store_true", help="ignore data/demo/")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
 
-    loaded = rc.load_receipts(include_demo=not args.no_demo)
+    loaded = rc.load_receipts()
     if not loaded.receipts:
         print("No receipts found in data/receipts/. Scan a bill first.", file=sys.stderr)
         return 1
@@ -112,9 +107,9 @@ def main() -> int:
         OUT_PAGE.write_text(PAGE_HEAD + fragment + PAGE_TAIL, encoding="utf-8")
 
     if not args.quiet:
-        spend = sum(c["total"] for c in payload["receipts"] if not c["demo"])
-        print(f"{meta['real_receipts']} real receipt(s) + {meta['demo_receipts']} demo · "
-              f"{len(payload['rows'])} line items · real spend {spend:,.2f} {meta['currency']}")
+        spend = sum(c["total"] for c in payload["receipts"])
+        print(f"{meta['receipt_count']} receipt(s) · {len(payload['rows'])} line items · "
+              f"spend {spend:,.2f} {meta['currency']}")
         if loaded.warnings:
             print(f"{len(loaded.warnings)} warning(s) above — worth a look, not blocking.")
         if args.check:

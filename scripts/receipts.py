@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = ROOT / "schema" / "receipt.schema.json"
-RECEIPT_DIRS = [ROOT / "data" / "receipts", ROOT / "data" / "demo"]
+RECEIPT_DIRS = [ROOT / "data" / "receipts"]
 
 CATEGORIES = [
     "produce", "bakery", "dairy_eggs", "meat_fish", "deli_prepared", "frozen",
@@ -168,13 +168,11 @@ def _jsonschema_check(r: dict, rid: str, problems: list) -> None:
         problems.append(Problem(rid, where, err.message))
 
 
-def load_receipts(include_demo: bool = True) -> LoadResult:
+def load_receipts() -> LoadResult:
     result = LoadResult()
     seen: dict[str, Path] = {}
     for directory in RECEIPT_DIRS:
         if not directory.exists():
-            continue
-        if directory.name == "demo" and not include_demo:
             continue
         for path in sorted(directory.glob("*.json")):
             rid = path.stem
@@ -183,7 +181,6 @@ def load_receipts(include_demo: bool = True) -> LoadResult:
             except json.JSONDecodeError as exc:
                 result.problems.append(Problem(rid, "(file)", f"invalid JSON: {exc}"))
                 continue
-            data.setdefault("demo", directory.name == "demo")
             _check_structure(data, rid, path, result.problems)
             _check_arithmetic(data, rid, result.problems)
             _jsonschema_check(data, rid, result.problems)
@@ -244,7 +241,6 @@ def flatten(receipts: list) -> list:
             price, unit = base_price(item)
             rows.append({
                 "receipt_id": r.get("receipt_id"),
-                "demo": bool(r.get("demo")),
                 "date": bought[:10],
                 "month": bought[:7],
                 "merchant_slug": merchant.get("slug", "unknown"),

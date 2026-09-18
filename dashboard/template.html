@@ -1,228 +1,306 @@
 <title>Basket Watch</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root {
-    --ground:#f3f4f1; --surface:#ffffff; --surface-2:#fafbf9;
-    --ink:#12151a; --ink-2:#46505a; --muted:#6b7580;
-    --hairline:#e3e6e0; --hairline-2:#eef0ec;
-    --accent:#2a78d6; --accent-soft:#e8f0fc;
-    --good:#008300; --bad:#c2352f; --flag:#9a6700; --flag-soft:#fdf4e0;
-    --store-1:#2a78d6; --store-2:#eb6834; --store-3:#1baf7a;
-    --demo-band:#f6efdd;
-    --shadow:0 1px 2px rgba(18,21,26,.05), 0 8px 24px -16px rgba(18,21,26,.25);
-    --radius:10px;
+    --ground:#f4f6f5; --surface:#ffffff; --surface-2:#f8faf9; --raise:#ffffff;
+    --ink:#0f1512; --ink-2:#3d4a44; --muted:#66736d;
+    --hairline:#e0e6e2; --hairline-2:#edf1ee;
+    --accent:#0b7a5e; --accent-mark:#12a077; --accent-soft:#e4f2ec; --accent-ink:#ffffff;
+    --bad:#c2352f; --bad-soft:#fdeceb; --flag:#8a5d00; --flag-soft:#fdf3e0;
+    --store-1:#0b7a5e; --store-2:#c25a1e; --store-3:#2a6fd6;
+    --shadow-sm:0 1px 2px rgba(15,21,18,.05);
+    --shadow:0 1px 2px rgba(15,21,18,.04), 0 10px 28px -18px rgba(15,21,18,.28);
+    --r-lg:16px; --r:12px; --r-sm:9px;
     --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --sans:"Heebo", ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+    --navh:64px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ground:#131619; --surface:#1a1e22; --surface-2:#1e2327;
-      --ink:#f0f2ee; --ink-2:#c3c9cf; --muted:#97a1aa;
-      --hairline:#2a3036; --hairline-2:#22272c;
-      --accent:#3987e5; --accent-soft:#17293f;
-      --good:#3fa34d; --bad:#e66767; --flag:#e0b155; --flag-soft:#2c2415;
-      --store-1:#3987e5; --store-2:#d95926; --store-3:#199e70;
-      --demo-band:#2a2417;
-      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -18px rgba(0,0,0,.8);
+      --ground:#0e1211; --surface:#161b19; --surface-2:#1b211e; --raise:#1f2623;
+      --ink:#edf2ef; --ink-2:#c2ccc7; --muted:#8e9c96;
+      --hairline:#252d29; --hairline-2:#1f2622;
+      --accent:#2fb489; --accent-mark:#2fb489; --accent-soft:#11291f; --accent-ink:#06120d;
+      --bad:#e66767; --bad-soft:#2a1615; --flag:#d9a94e; --flag-soft:#241d10;
+      --store-1:#2fb489; --store-2:#d9743a; --store-3:#4a8ae8;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -20px rgba(0,0,0,.9);
     }
   }
   :root[data-theme="dark"] {
-    --ground:#131619; --surface:#1a1e22; --surface-2:#1e2327;
-    --ink:#f0f2ee; --ink-2:#c3c9cf; --muted:#97a1aa;
-    --hairline:#2a3036; --hairline-2:#22272c;
-    --accent:#3987e5; --accent-soft:#17293f;
-    --good:#3fa34d; --bad:#e66767; --flag:#e0b155; --flag-soft:#2c2415;
-    --store-1:#3987e5; --store-2:#d95926; --store-3:#199e70;
-    --demo-band:#2a2417;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -18px rgba(0,0,0,.8);
+    --ground:#0e1211; --surface:#161b19; --surface-2:#1b211e; --raise:#1f2623;
+    --ink:#edf2ef; --ink-2:#c2ccc7; --muted:#8e9c96;
+    --hairline:#252d29; --hairline-2:#1f2622;
+    --accent:#2fb489; --accent-mark:#2fb489; --accent-soft:#11291f; --accent-ink:#06120d;
+    --bad:#e66767; --bad-soft:#2a1615; --flag:#d9a94e; --flag-soft:#241d10;
+    --store-1:#2fb489; --store-2:#d9743a; --store-3:#4a8ae8;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -20px rgba(0,0,0,.9);
   }
 
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans);
-         font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
-  .wrap { max-width:1180px; margin:0 auto; padding-inline:16px; }
-  h1,h2,h3 { margin:0; text-wrap:balance; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans);
+    font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .wrap { max-width:1120px; margin:0 auto; padding-inline:16px; }
+  h1,h2,h3 { margin:0; text-wrap:balance; letter-spacing:-.015em; }
   .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .eyebrow { font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
 
-  .topbar { position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
-            background:color-mix(in srgb, var(--ground) 92%, transparent);
-            backdrop-filter:blur(8px); border-bottom:1px solid var(--hairline); }
-  .topbar-inner { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; padding-block:11px; }
-  .brand { display:flex; align-items:baseline; gap:10px; margin-inline-end:auto; }
-  .brand h1 { font-size:19px; font-weight:800; letter-spacing:-.02em; }
-  .brand .tick { font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:600; }
-  .controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-  select, input[type="search"], input[type="text"], input[type="number"], textarea {
-    font:inherit; font-size:13px; color:var(--ink); background:var(--surface);
-    border:1px solid var(--hairline); border-radius:7px; padding:6px 9px; min-width:0; }
-  input[type="search"] { width:180px; }
-  select:focus-visible, input:focus-visible, button:focus-visible, textarea:focus-visible, th[role="button"]:focus-visible {
-    outline:2px solid var(--accent); outline-offset:1px; }
-  .switch { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-2); cursor:pointer; }
-  .switch input { accent-color:var(--accent); width:15px; height:15px; }
+  /* ---------- chrome ---------- */
+  .topbar {
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
+    background:var(--ground); border-bottom:1px solid var(--hairline);
+  }
+  .topbar-inner { display:flex; align-items:center; gap:12px; padding-block:10px; }
+  .brand { display:flex; align-items:center; gap:9px; margin-inline-end:auto; min-width:0; overflow:hidden; }
+  .brand .logo {
+    width:28px; height:28px; border-radius:8px; background:var(--accent); flex:none;
+    display:grid; place-items:center; color:var(--accent-ink);
+  }
+  .brand .logo svg { width:16px; height:16px; display:block; }
+  .brand h1 { font-size:17px; font-weight:800; white-space:nowrap; }
+  .brand .tick { font-size:11px; color:var(--muted); font-weight:500; white-space:nowrap;
+                 overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .chrome-controls { display:flex; gap:7px; align-items:center; flex:none; }
+
+  select, input[type="search"], input[type="text"], input[type="number"], input[type="password"], textarea {
+    font:inherit; font-size:13.5px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--hairline); border-radius:var(--r-sm); padding:8px 10px; min-width:0;
+    -webkit-appearance:none; appearance:none;
+  }
+  select { padding-inline-end:26px;
+    background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+    background-position:calc(100% - 15px) 52%, calc(100% - 10px) 52%;
+    background-size:5px 5px, 5px 5px; background-repeat:no-repeat; }
+  :where(select,input,textarea,button,[tabindex]):focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
   button { font:inherit; cursor:pointer; }
-  .btn { font-size:13px; font-weight:600; border-radius:7px; padding:7px 13px;
-         border:1px solid var(--hairline); background:var(--surface); color:var(--ink); }
+  .btn {
+    font-size:13.5px; font-weight:600; border-radius:var(--r-sm); padding:9px 14px;
+    border:1px solid var(--hairline); background:var(--surface); color:var(--ink);
+    display:inline-flex; align-items:center; gap:7px; white-space:nowrap;
+  }
   .btn:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
-  .btn:disabled { opacity:.5; cursor:not-allowed; }
-  .btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .btn-primary:hover:not(:disabled) { filter:brightness(1.08); color:#fff; }
-
-  .seg { display:inline-flex; border:1px solid var(--hairline); border-radius:7px; overflow:hidden; background:var(--surface); }
-  .seg button { border:0; background:transparent; color:var(--muted); font-size:12.5px; font-weight:600; padding:6px 11px; }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .btn-primary { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .btn-primary:hover:not(:disabled) { filter:brightness(1.07); color:var(--accent-ink); }
+  .btn-lg { font-size:15px; padding:12px 20px; border-radius:var(--r); }
+  .seg { display:inline-flex; border:1px solid var(--hairline); border-radius:var(--r-sm); overflow:hidden; background:var(--surface); }
+  .seg button { border:0; background:transparent; color:var(--muted); font-size:12.5px; font-weight:600; padding:7px 10px; }
   .seg button[aria-pressed="true"] { background:var(--accent-soft); color:var(--accent); }
 
-  .tabs { display:flex; gap:2px; border-bottom:1px solid var(--hairline); margin-bottom:0; }
-  .tabs button { border:0; background:transparent; color:var(--muted); font-size:14px; font-weight:600;
-                 padding:11px 15px; border-bottom:2px solid transparent; margin-bottom:-1px; }
-  .tabs button[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); }
-  .tabs button:hover { color:var(--ink); }
+  /* tabs: top on desktop, bottom bar on phones */
+  .tabs-top { display:flex; gap:4px; }
+  .tabs-top button {
+    border:0; background:transparent; color:var(--muted); font-size:14px; font-weight:600;
+    padding:12px 14px; border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .tabs-top button[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); }
+  .tabbar { display:none; }
+  @media (max-width:700px) {
+    .tabs-top { display:none; }
+    .tabbar {
+      display:grid; grid-template-columns:repeat(3,1fr); position:fixed; inset-inline:0; bottom:0; z-index:50;
+      background:var(--surface); border-top:1px solid var(--hairline);
+      padding-bottom:env(safe-area-inset-bottom,0px);
+    }
+    .tabbar button {
+      border:0; background:transparent; color:var(--muted); font-size:11px; font-weight:600;
+      display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 4px 8px;
+    }
+    .tabbar button svg { width:21px; height:21px; }
+    .tabbar button[aria-selected="true"] { color:var(--accent); }
+    body { padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px)); }
+  }
 
-  .demo-band { background:var(--demo-band); border-bottom:1px solid var(--hairline); font-size:12.5px; color:var(--ink-2); }
-  .demo-band .wrap { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding-block:7px; }
-  .pill { font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
-          background:var(--flag-soft); color:var(--flag);
-          border:1px solid color-mix(in srgb, var(--flag) 35%, transparent);
-          border-radius:999px; padding:2px 8px; white-space:nowrap; }
+  /* ---------- surfaces ---------- */
+  .card { background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-lg); padding:18px; }
+  .card.flat { box-shadow:none; }
+  .card + .card, .grid + .card, .card + .grid, .grid + .grid, .card + .filters { margin-top:14px; }
+  .card-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .card h2 { font-size:15.5px; font-weight:700; }
+  .card .sub { font-size:12.5px; color:var(--muted); margin:4px 0 16px; }
+  .card .hint { font-size:12px; color:var(--muted); font-weight:500; white-space:nowrap; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:14px; align-items:start; }
 
-  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1px;
-          background:var(--hairline); border:1px solid var(--hairline); border-radius:var(--radius);
-          overflow:hidden; margin-block:22px; }
-  .kpi { background:var(--surface); padding:15px 16px 16px; }
-  .kpi .k-label { font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:600; }
-  .kpi .k-value { font-family:var(--mono); font-size:25px; font-weight:600; letter-spacing:-.03em; margin-top:6px; }
-  .kpi .k-note { font-size:12px; color:var(--muted); margin-top:3px; }
-  .kpi.flagged .k-value { color:var(--bad); }
+  /* hero */
+  .hero { background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-lg);
+          padding:20px; margin-top:16px; display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; }
+  .hero .total { display:flex; flex-direction:column; gap:3px; margin-inline-end:auto; }
+  .hero .total .v { font-family:var(--mono); font-size:38px; font-weight:600; letter-spacing:-.035em; line-height:1; }
+  .hero .total .sub { font-size:12.5px; color:var(--muted); }
+  .hero .side { display:flex; gap:26px; flex-wrap:wrap; }
+  .hero .side div { display:flex; flex-direction:column; gap:2px; }
+  .hero .side .v { font-family:var(--mono); font-size:17px; font-weight:600; letter-spacing:-.02em; }
+  .hero .side .v.warn { color:var(--bad); }
 
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; align-items:start; }
-  .card { background:var(--surface); border:1px solid var(--hairline); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); }
-  .card + .card, .grid + .card, .card + .grid, .grid + .grid { margin-top:16px; }
-  .card-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:4px; }
-  .card h2 { font-size:15px; font-weight:700; letter-spacing:-.01em; }
-  .card .sub { font-size:12.5px; color:var(--muted); margin-bottom:14px; margin-top:0; }
-  .card .hint { font-size:12px; color:var(--muted); font-weight:500; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:14px; }
+  .stat { background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r); padding:13px 14px; }
+  .stat .v { font-family:var(--mono); font-size:19px; font-weight:600; margin-top:5px; letter-spacing:-.02em; }
+  .stat .n { font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  .filters { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:16px; }
+  .filters input[type="search"] { flex:1; min-width:150px; }
+
   .chart { width:100%; }
   .chart svg { display:block; width:100%; height:auto; overflow:visible; }
-  .empty { border:1px dashed var(--hairline); border-radius:8px; padding:22px 18px; color:var(--muted);
-           font-size:13.5px; text-align:center; background:var(--surface-2); }
-  .empty strong { color:var(--ink-2); font-weight:600; }
 
+  .empty { border:1px dashed var(--hairline); border-radius:var(--r); padding:26px 18px; text-align:center; background:var(--surface-2); }
+  .empty .ico { width:34px; height:34px; margin:0 auto 10px; color:var(--muted); opacity:.7; }
+  .empty strong { display:block; color:var(--ink-2); font-weight:700; font-size:14px; margin-bottom:5px; }
+  .empty span { color:var(--muted); font-size:13px; display:block; max-width:44ch; margin:0 auto; }
+  .empty .btn { margin-top:14px; }
+
+  /* tables */
   .scroll { overflow-x:auto; margin-inline:-4px; padding-inline:4px; }
   table { border-collapse:collapse; width:100%; font-size:13.5px; }
-  th, td { text-align:start; padding:8px 10px; border-bottom:1px solid var(--hairline-2); white-space:nowrap; }
-  th { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600;
+  th, td { text-align:start; padding:9px 10px; border-bottom:1px solid var(--hairline-2); white-space:nowrap; }
+  th { font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:700;
        border-bottom:1px solid var(--hairline); position:sticky; top:0; background:var(--surface); }
   th[role="button"] { cursor:pointer; user-select:none; }
   th[role="button"]:hover { color:var(--ink); }
   td.n, th.n { text-align:end; font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  tbody tr:last-child td { border-bottom:0; }
   tbody tr:hover { background:var(--surface-2); }
-  td.name { white-space:normal; min-width:190px; max-width:320px; }
+  td.name { white-space:normal; min-width:180px; max-width:320px; }
   .sec { font-size:12px; color:var(--muted); }
-  .best { color:var(--good); font-weight:600; }
-  .best::after { content:" ✓"; }
+  .best { color:var(--accent); font-weight:700; }
   .delta-up { color:var(--bad); font-weight:600; }
-  .delta-down { color:var(--good); font-weight:600; }
-  .chip { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--ink-2); }
-  .dot { width:9px; height:9px; border-radius:2px; flex:none; }
+  .delta-down { color:var(--accent); font-weight:600; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-2); }
+  .dot { width:8px; height:8px; border-radius:99px; flex:none; }
   .legend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:12px; }
-  .flagrow td { background:color-mix(in srgb, var(--flag-soft) 60%, transparent); }
-  .tag { font-size:10.5px; font-family:var(--mono); color:var(--muted); }
+  .flagrow td { background:var(--flag-soft); }
+  .flagpill { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:var(--flag); }
 
   /* scan */
-  .drop { border:2px dashed var(--hairline); border-radius:var(--radius); background:var(--surface-2);
-          padding:34px 20px; text-align:center; transition:border-color .12s, background .12s; }
+  .drop { border:2px dashed var(--hairline); border-radius:var(--r-lg); background:var(--surface-2);
+          padding:30px 18px; text-align:center; transition:border-color .12s, background .12s; }
   .drop.over { border-color:var(--accent); background:var(--accent-soft); }
-  .drop h3 { font-size:16px; margin-bottom:6px; }
-  .drop p { color:var(--muted); font-size:13px; margin:0 0 14px; }
+  .drop .ico { width:40px; height:40px; margin:0 auto 12px; color:var(--accent); }
+  .drop h3 { font-size:17px; margin-bottom:5px; }
+  .drop p { color:var(--muted); font-size:13px; margin:0 0 16px; }
+  .drop .row { display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
   .preview { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; }
-  .preview img { max-height:280px; border-radius:8px; border:1px solid var(--hairline); }
-  .status { display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-2); }
-  .spinner { width:14px; height:14px; border:2px solid var(--hairline); border-top-color:var(--accent);
+  .preview img { max-height:300px; max-width:100%; border-radius:var(--r); border:1px solid var(--hairline); }
+  .preview .pane { flex:1; min-width:250px; }
+  .status { display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-2); min-height:22px; }
+  .spinner { width:15px; height:15px; border:2px solid var(--hairline); border-top-color:var(--accent);
              border-radius:50%; animation:spin .7s linear infinite; flex:none; }
   @keyframes spin { to { transform:rotate(360deg); } }
-  .notice { border-radius:8px; padding:11px 13px; font-size:13px; margin-block:12px; border:1px solid; }
+  .notice { border-radius:var(--r-sm); padding:11px 13px; font-size:13px; margin-block:12px; border:1px solid; }
   .notice-warn { background:var(--flag-soft); border-color:color-mix(in srgb,var(--flag) 35%,transparent); color:var(--flag); }
-  .notice-bad { background:color-mix(in srgb,var(--bad) 10%,transparent); border-color:color-mix(in srgb,var(--bad) 35%,transparent); color:var(--bad); }
-  .notice-good { background:color-mix(in srgb,var(--good) 10%,transparent); border-color:color-mix(in srgb,var(--good) 35%,transparent); color:var(--good); }
+  .notice-bad { background:var(--bad-soft); border-color:color-mix(in srgb,var(--bad) 35%,transparent); color:var(--bad); }
+  .notice-good { background:var(--accent-soft); border-color:color-mix(in srgb,var(--accent) 30%,transparent); color:var(--accent); }
   .row-actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; align-items:center; }
+  .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .field label { font-size:12.5px; font-weight:600; color:var(--ink-2); }
+  .field .help { font-size:12px; color:var(--muted); }
+  .key-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .key-row input { flex:1; min-width:200px; font-family:var(--mono); font-size:12.5px; }
+  details.settings { border:1px solid var(--hairline); border-radius:var(--r); padding:0; overflow:hidden; margin-top:14px; }
+  details.settings > summary { padding:12px 14px; cursor:pointer; font-size:13.5px; font-weight:600; color:var(--ink-2); list-style:none; }
+  details.settings > summary::-webkit-details-marker { display:none; }
+  details.settings > summary::after { content:"›"; float:inline-end; color:var(--muted); }
+  details.settings[open] > summary { border-bottom:1px solid var(--hairline); }
+  details.settings .body { padding:14px; }
 
   /* ask */
-  .ask-thread { display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
-  .bubble { border-radius:10px; padding:12px 14px; font-size:14px; max-width:min(680px,100%); white-space:pre-wrap; }
-  .bubble.me { background:var(--accent-soft); color:var(--ink); align-self:flex-end; border:1px solid color-mix(in srgb,var(--accent) 25%,transparent); }
+  .ask-thread { display:flex; flex-direction:column; gap:12px; margin-bottom:14px; }
+  .bubble { border-radius:var(--r); padding:12px 14px; font-size:14.5px; max-width:min(660px,100%); white-space:pre-wrap; }
+  .bubble.me { background:var(--accent-soft); color:var(--ink); align-self:flex-end; }
   .bubble.ai { background:var(--surface-2); border:1px solid var(--hairline); align-self:flex-start; }
-  .bubble .who { font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:5px; }
-  .ask-form { display:flex; gap:9px; align-items:flex-end; }
-  .ask-form textarea { flex:1; resize:vertical; min-height:46px; font-size:14px; }
+  .bubble .who { font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:5px; }
+  .ask-form { display:flex; gap:8px; align-items:flex-end; }
+  .ask-form textarea { flex:1; resize:vertical; min-height:48px; font-size:14.5px; }
   .suggest { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
   .suggest button { font-size:12.5px; color:var(--ink-2); background:var(--surface-2);
-                    border:1px solid var(--hairline); border-radius:999px; padding:5px 11px; }
+                    border:1px solid var(--hairline); border-radius:99px; padding:7px 13px; }
   .suggest button:hover { border-color:var(--accent); color:var(--accent); }
 
-  #tip { position:fixed; z-index:90; pointer-events:none; opacity:0; transition:opacity .09s;
-         background:var(--surface); color:var(--ink); border:1px solid var(--hairline); border-radius:7px;
-         padding:8px 10px; font-size:12.5px; box-shadow:var(--shadow); max-width:260px; }
+  #tip { position:fixed; inset-inline-start:0; top:0; z-index:90; pointer-events:none; opacity:0; transition:opacity .09s;
+         background:var(--raise); color:var(--ink); border:1px solid var(--hairline); border-radius:var(--r-sm);
+         padding:8px 11px; font-size:12.5px; box-shadow:var(--shadow); max-width:260px; }
   #tip .t-title { font-weight:700; margin-bottom:3px; }
-  #tip .t-row { color:var(--ink-2); font-family:var(--mono); font-size:12px; }
+  #tip .t-row { color:var(--ink-2); font-family:var(--mono); font-size:11.5px; }
   .mark { transition:opacity .1s; }
   .mark:hover { opacity:.82; }
 
-  footer { color:var(--muted); font-size:12.5px; padding-block:30px 40px; }
-  footer code { font-family:var(--mono); font-size:11.5px; color:var(--ink-2); }
+  footer { color:var(--muted); font-size:12px; padding-block:26px 34px; }
+  footer code { font-family:var(--mono); font-size:11px; color:var(--ink-2); }
   @media (prefers-reduced-motion: reduce) { *, .spinner { animation:none !important; transition:none !important; } }
   @media (max-width:560px) {
-    .brand h1 { font-size:17px; }
-    input[type="search"] { width:100%; }
-    .controls { width:100%; }
-    .kpi .k-value { font-size:21px; }
-    .tabs button { padding:10px 11px; font-size:13px; }
+    .brand .tick { display:none; }
+    .stats { grid-template-columns:repeat(2,1fr); }
+    .hero { padding:16px; }
+    .hero .total .v { font-size:31px; }
+    .card { padding:15px; border-radius:var(--r); }
+    .wrap { padding-inline:14px; }
   }
 </style>
 
 <div class="topbar">
   <div class="wrap topbar-inner">
-    <div class="brand"><h1 id="brand-name">Basket Watch</h1><span class="tick" id="range-tick"></span></div>
-    <div class="controls">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 3h14v17l-2.3-2-2.3 2-2.4-2-2.3 2-2.4-2L5 20z"/><path d="M9 8h6M9 12h6M9 16h3"/>
+        </svg>
+      </span>
+      <h1 id="brand-name">Basket Watch</h1>
+      <span class="tick" id="range-tick"></span>
+    </div>
+    <div class="chrome-controls">
       <span class="seg" role="group" aria-label="Language">
-        <button type="button" id="lang-he" aria-pressed="false">עברית</button>
+        <button type="button" id="lang-he" aria-pressed="false">עב</button>
         <button type="button" id="lang-en" aria-pressed="true">EN</button>
       </span>
       <select id="f-currency" aria-label="Currency"></select>
-      <input type="number" id="f-rate" step="0.0001" min="0" style="width:96px" hidden>
+      <input type="number" id="f-rate" step="0.0001" min="0" style="width:82px" hidden>
     </div>
   </div>
-  <div class="wrap"><div class="tabs" role="tablist">
-    <button type="button" role="tab" id="tab-dash" aria-selected="true"></button>
-    <button type="button" role="tab" id="tab-scan" aria-selected="false"></button>
-    <button type="button" role="tab" id="tab-ask" aria-selected="false"></button>
+  <div class="wrap"><div class="tabs-top" role="tablist">
+    <button type="button" role="tab" data-tab="dash" aria-selected="true"></button>
+    <button type="button" role="tab" data-tab="scan" aria-selected="false"></button>
+    <button type="button" role="tab" data-tab="ask" aria-selected="false"></button>
   </div></div>
-</div>
-<div class="demo-band" id="demo-band" hidden>
-  <div class="wrap"><span class="pill" id="demo-pill"></span><span id="demo-band-text"></span></div>
 </div>
 
 <main class="wrap">
-  <!-- ============ dashboard ============ -->
+  <!-- ===================== dashboard ===================== -->
   <section id="view-dash">
-    <div class="controls" style="padding-block:16px 0; gap:8px">
-      <label class="switch" for="f-demo"><input type="checkbox" id="f-demo" checked> <span id="f-demo-label"></span></label>
+    <div class="hero">
+      <div class="total">
+        <span class="eyebrow" id="hero-label"></span>
+        <span class="v" id="hero-total">—</span>
+        <span class="sub" id="hero-sub"></span>
+      </div>
+      <div class="side" id="hero-side"></div>
+    </div>
+    <div class="stats" id="stats"></div>
+
+    <div class="filters">
       <select id="f-period" aria-label="Period"></select>
       <select id="f-store" aria-label="Store"></select>
       <select id="f-cat" aria-label="Category"></select>
       <input type="search" id="f-q" aria-label="Search">
     </div>
-    <div class="kpis" id="kpis"></div>
-    <div class="grid">
-      <section class="card">
-        <div class="card-head"><h2 id="h-months"></h2><span class="hint" id="spend-hint"></span></div>
-        <p class="sub" id="s-months"></p><div class="chart" id="c-months"></div>
-      </section>
+
+    <div class="grid" style="margin-top:14px">
       <section class="card">
         <div class="card-head"><h2 id="h-cats"></h2><span class="hint" id="cat-hint"></span></div>
         <p class="sub" id="s-cats"></p><div class="chart" id="c-cats"></div>
       </section>
+      <section class="card">
+        <div class="card-head"><h2 id="h-months"></h2><span class="hint" id="spend-hint"></span></div>
+        <p class="sub" id="s-months"></p><div class="chart" id="c-months"></div>
+      </section>
     </div>
+
     <div class="grid">
       <section class="card">
         <div class="card-head"><h2 id="h-index"></h2><span class="hint" id="hint-index"></span></div>
@@ -233,10 +311,12 @@
         <p class="sub" id="s-stores"></p><div class="chart" id="c-stores"></div>
       </section>
     </div>
+
     <section class="card">
       <div class="card-head"><h2 id="h-compare"></h2><span class="hint" id="cmp-hint"></span></div>
       <p class="sub" id="s-compare"></p><div id="t-compare"></div>
     </section>
+
     <div class="grid">
       <section class="card">
         <div class="card-head"><h2 id="h-movers"></h2><span class="hint" id="hint-movers"></span></div>
@@ -247,29 +327,43 @@
         <p class="sub" id="s-receipts"></p><div id="t-receipts"></div>
       </section>
     </div>
+
     <section class="card">
       <div class="card-head"><h2 id="h-lines"></h2><span class="hint" id="lines-hint"></span></div>
       <p class="sub" id="s-lines"></p><div id="t-lines"></div>
     </section>
   </section>
 
-  <!-- ============ scan ============ -->
+  <!-- ===================== scan ===================== -->
   <section id="view-scan" hidden>
-    <section class="card" style="margin-top:22px">
-      <div class="card-head"><h2 id="h-scan"></h2></div>
+    <section class="card" style="margin-top:16px">
+      <div class="card-head"><h2 id="h-scan"></h2><span class="hint" id="scan-engine"></span></div>
       <p class="sub" id="s-scan"></p>
-      <div id="scan-unavailable" class="empty" hidden></div>
+
+      <div id="scan-blocked" class="empty" hidden></div>
+
       <div id="scan-ui" hidden>
         <div class="drop" id="drop">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2L9 4h6l1.5 2h2A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/>
+              <circle cx="12" cy="12.5" r="3.5"/>
+            </svg>
+          </span>
           <h3 id="drop-title"></h3>
           <p id="drop-sub"></p>
+          <input type="file" id="file-camera" accept="image/*" capture="environment" hidden>
           <input type="file" id="file" accept="image/*" hidden>
-          <button type="button" class="btn btn-primary" id="pick"></button>
+          <div class="row">
+            <button type="button" class="btn btn-primary btn-lg" id="take"></button>
+            <button type="button" class="btn btn-lg" id="pick"></button>
+          </div>
         </div>
+
         <div id="scan-stage" hidden style="margin-top:16px">
           <div class="preview">
             <img id="scan-img" alt="">
-            <div style="flex:1; min-width:240px">
+            <div class="pane">
               <div class="status" id="scan-status"></div>
               <div id="scan-result"></div>
               <div class="row-actions" id="scan-actions"></div>
@@ -277,19 +371,36 @@
           </div>
         </div>
       </div>
+
+      <details class="settings" id="settings">
+        <summary id="settings-title"></summary>
+        <div class="body">
+          <div class="field">
+            <label for="apikey" id="key-label"></label>
+            <div class="key-row">
+              <input type="password" id="apikey" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+              <button type="button" class="btn" id="key-save"></button>
+              <button type="button" class="btn" id="key-clear"></button>
+            </div>
+            <span class="help" id="key-help"></span>
+          </div>
+          <div id="key-state" class="sec"></div>
+        </div>
+      </details>
     </section>
+
     <section class="card">
       <div class="card-head"><h2 id="h-saved"></h2><span class="hint" id="saved-hint"></span></div>
       <p class="sub" id="s-saved"></p><div id="t-saved"></div>
     </section>
   </section>
 
-  <!-- ============ ask ============ -->
+  <!-- ===================== ask ===================== -->
   <section id="view-ask" hidden>
-    <section class="card" style="margin-top:22px">
-      <div class="card-head"><h2 id="h-ask"></h2></div>
+    <section class="card" style="margin-top:16px">
+      <div class="card-head"><h2 id="h-ask"></h2><span class="hint" id="ask-engine"></span></div>
       <p class="sub" id="s-ask"></p>
-      <div id="ask-unavailable" class="empty" hidden></div>
+      <div id="ask-blocked" class="empty" hidden></div>
       <div id="ask-ui" hidden>
         <div class="suggest" id="ask-suggest"></div>
         <div class="ask-thread" id="ask-thread"></div>
@@ -305,6 +416,21 @@
 
   <footer><span id="foot-text"></span> <span id="built"></span></footer>
 </main>
+
+<nav class="tabbar" role="tablist" aria-label="Sections">
+  <button type="button" role="tab" data-tab="dash" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg>
+    <span data-label="tab_dash"></span>
+  </button>
+  <button type="button" role="tab" data-tab="scan" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M21 16v2.5a2.5 2.5 0 0 1-2.5 2.5H16M8 21H5.5A2.5 2.5 0 0 1 3 18.5V16M7 12h10"/></svg>
+    <span data-label="tab_scan"></span>
+  </button>
+  <button type="button" role="tab" data-tab="ask" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3 2.4V13"/></svg>
+    <span data-label="tab_ask"></span>
+  </button>
+</nav>
 <div id="tip" role="status" aria-live="polite"></div>
 
 <script>
@@ -321,34 +447,32 @@
     return m;
   }
 
-  /* ======================= language ======================= */
+  /* ========================= language ========================= */
   const I18N = {
     en: {
       dir: "ltr", locale: "en-IL", brand: "Basket Watch",
-      tab_dash: "Dashboard", tab_scan: "Scan a bill", tab_ask: "Ask",
-      demo_switch: "demo history", demo_pill: "demo data on",
-      demo_text: "{n} synthetic receipts are mixed in so the comparisons have history. Real scanned receipts: {r}. Untick to see only your own.",
+      tab_dash: "Dashboard", tab_scan: "Scan", tab_ask: "Ask",
       all_time: "All time", last_n: "Last {n} months", all_stores: "All stores", all_cats: "All categories",
-      search_ph: "Search item…", no_receipts: "no receipts in view",
+      search_ph: "Search item…", no_receipts: "nothing scanned yet",
       rate_ph: "rate", rate_title: "How many {c} per ₪1 — display only",
-      kpi_total: "Total spend", kpi_avg: "Average basket", kpi_over: "Overpaid vs cheapest",
-      kpi_vat: "VAT paid", kpi_max: "Most expensive line",
-      kpi_total_note: "{n} receipts · {l} lines", kpi_avg_note: "across {n} store(s)",
-      kpi_over_note: "{n} products priced at 2+ stores", kpi_over_none: "needs the same product at 2 stores",
-      kpi_vat_note: "18% where charged",
+      hero_label: "Total spend", hero_sub: "{n} receipts · {l} line items",
+      hero_vat: "VAT paid", hero_avg: "Average basket", hero_over: "Overpaid",
+      st_items: "Items bought", st_priciest: "Priciest line", st_stores: "Stores", st_flagged: "Needs checking",
+      st_items_n: "across {n} categories", st_flagged_n: "lines the scanner was unsure about",
+      st_flagged_ok: "every line read cleanly",
       h_months: "Spend by month", s_months: "Every shop, totalled by the month it happened.",
       h_cats: "Where the money goes", s_cats: "Share of spend by category.",
       h_index: "Basket price index", hint_index: "100 = first month",
       s_index: "Same products, same store — what the shelf price did over time.",
       h_stores: "Store price level", hint_stores: "100 = cheapest",
-      s_stores: "Only products you bought at more than one store are counted.",
+      s_stores: "Only products bought at more than one store are counted.",
       h_compare: "Same product, different store",
-      s_compare: "Latest price seen at each store, on a per-kg, per-litre or per-item basis.",
+      s_compare: "Latest price at each store, per kg, per litre or per item.",
       h_movers: "Price movers", hint_movers: "first → latest",
       s_movers: "Biggest shelf-price moves across your receipts.",
       h_receipts: "Receipts", s_receipts: "Every scanned bill, newest first.",
       h_lines: "Every line item",
-      s_lines: "Sort any column. Amber rows were flagged by the scanner as worth checking against the paper receipt.",
+      s_lines: "Sort any column. Amber rows were flagged by the scanner as worth checking against the paper.",
       months_n: "{n} months", cats_n: "{n} categories", products_n: "{n} products",
       lines_n: "{n} lines", in_view: "{n} in view",
       col_product: "Product", col_spread: "Spread", col_costing: "Costing you", col_first: "First",
@@ -356,67 +480,76 @@
       col_items: "Items", col_total: "Total", col_item: "Item", col_category: "Category",
       col_qty: "Qty", col_unit_price: "Unit price", col_base: "Per kg / L / ea", col_paid: "Paid",
       other_cats: "{n} smaller categories", other_cats_t: "Other categories",
+      first_t: "No receipts yet", first_d: "Scan your first bill and the numbers appear here.",
+      scan_cta: "Scan a bill",
       e_range_t: "Nothing in range", e_range_d: "Widen the period or clear the filters.",
       e_hist_t: "Not enough history yet",
-      e_hist_d: "Needs the same product bought in two different months. Scan next month's receipt and this fills in.",
-      e_stores_t: "Needs two stores", e_stores_d: "Buy the same product at a second store and this ranks them for you.",
+      e_hist_d: "Needs the same product bought in two different months. Scan next month's shop and this fills in.",
+      e_stores_t: "One store so far", e_stores_d: "Scan a bill from a second shop and this ranks them on the things you actually buy.",
       e_overlap_t: "No overlap yet",
-      e_overlap_d: "This table compares a product's price between stores — it needs the same barcode on receipts from two different shops.",
+      e_overlap_d: "This compares a product's price between stores — it needs the same barcode on bills from two different shops.",
       e_repeat_t: "No repeat purchases yet",
-      e_repeat_d: "Once you buy the same product twice at the same store, its price move shows up here.",
+      e_repeat_d: "Buy the same product twice at the same store and its price move shows up here.",
       e_lines_t: "No lines match", e_lines_d: "Clear the search or widen the period.",
       e_norec_t: "No receipts in range", e_norec_d: "Clear a filter to see them.",
-      low_conf: "⚑ low confidence — check the paper receipt",
+      low_conf: "check against the paper",
       showing_first: "Showing the first 250 of {n} lines — search to narrow.",
       vs_cheapest: "{v} vs cheapest (100)", on_shared: "on {n} shared products",
       idx_vs: "index {v} · {d}% vs {m}", idx_covered: "{c} of {t} tracked products repriced",
       receipts_lines: "{v} · {r} receipts · {l} lines",
-      h_scan: "Scan a bill", s_scan: "Photograph the receipt, drop it here, and Claude reads it into your data.",
-      drop_title: "Drop a receipt photo here", drop_sub: "JPEG, PNG or WebP — a straight-on photo of the whole receipt reads best.",
-      pick: "Choose a photo", scanning: "Reading the receipt…", scan_stop: "Stop",
-      scan_again: "Scan another", scan_save: "Save to my receipts", scan_download: "Download JSON",
-      scan_saved: "Saved. It is in your dashboard now.", scan_saving: "Saving…",
-      scan_unavailable: "Scanning runs in the published app, where Claude can read the photo. Open the artifact link, or use the bill-scanner skill in Claude Code.",
-      scan_nogrant: "Claude access was declined for this page, so the photo cannot be read here.",
+      h_scan: "Scan a bill", s_scan: "Photograph the receipt and Claude reads it into your data.",
+      drop_title: "Take a photo of the receipt", drop_sub: "Or drop an image here. A straight-on shot of the whole receipt reads best.",
+      take: "Take photo", pick: "Choose a file",
+      scanning: "Reading the receipt…", scan_stop: "Stop", scan_again: "Scan another",
+      scan_save: "Save", scan_download: "Download JSON",
+      scan_saved: "Saved — it is on your dashboard now.", scan_saving: "Saving…",
       scan_failed: "Could not read this photo: {m}",
-      scan_nodb: "There is nowhere to save it in this view — download the JSON and drop it into data/receipts/.",
       scan_checks_ok: "Line totals match the printed total.",
-      scan_checks_bad: "Check these before saving: {m}",
-      scan_dup: "A receipt with this number is already saved. Saving will overwrite it.",
-      h_saved: "Scanned in this app", s_saved: "Receipts saved from the scan screen, stored with this artifact.",
-      saved_none_t: "Nothing scanned yet", saved_none_d: "Receipts you scan here are stored with the app and appear on the dashboard.",
+      scan_checks_bad: "Check before saving: {m}",
+      scan_dup: "A receipt with this number is already saved. Saving overwrites it.",
+      engine_sample: "via Claude in this page", engine_native: "via your API key", engine_none: "not set up",
+      blocked_t: "Scanning needs Claude", 
+      blocked_d: "In this app, add your own Anthropic API key below and scanning works. Opened as a published artifact instead, it runs on your Claude account with no key at all.",
+      settings_title: "Settings — Anthropic API key",
+      key_label: "Anthropic API key",
+      key_help: "Stored only on this device, in this app. It is never sent anywhere but api.anthropic.com, and never leaves with the app — each person installing this app needs their own key. Scans cost roughly $0.09 each on your API account.",
+      key_save: "Save", key_clear: "Clear",
+      key_set: "A key is saved on this device. Scanning and Ask are on.",
+      key_none: "No key saved. Get one at console.anthropic.com → API keys.",
+      key_bad: "That does not look like an Anthropic key (they start with sk-ant-).",
+      h_saved: "Scanned in this app", s_saved: "Receipts you scanned here, kept with the app.",
+      saved_none_t: "Nothing scanned in the app yet", saved_none_d: "Receipts you scan here show up in this list and on the dashboard.",
       delete: "Delete", confirm_delete: "Delete this receipt?",
-      h_ask: "Ask about your spending", s_ask: "Questions in plain language, answered from the receipts in this app.",
+      h_ask: "Ask about your spending", s_ask: "Questions in plain language, answered from your receipts.",
       ask_ph: "e.g. how much did I spend on meat last month?", ask_send: "Ask", ask_stop: "Stop",
       ask_thinking: "Thinking…",
-      ask_unavailable: "The AI screen runs in the published app, where Claude can answer. Open the artifact link to use it.",
-      ask_note: "Answers come from the receipt data in this app only — the filters above do not limit them. Claude can be wrong; check anything that matters.",
+      ask_blocked_t: "Ask needs Claude",
+      ask_blocked_d: "Add an Anthropic API key on the Scan tab, or open this as a published artifact where it runs on your Claude account.",
+      ask_note: "Answers come from the receipts in this app only. Claude can be wrong — check anything that matters.",
       ask_failed: "That did not work: {m}",
       s1: "Which store is cheapest for me?", s2: "What went up in price the most?",
-      s3: "Where can I save money?", s4: "Summarise last month",
+      s3: "Where can I save money?", s4: "Summarise this month",
       you: "You", claude: "Claude",
-      foot: "Built from data/receipts/*.json. Scan a bill above, or run the bill-scanner skill in Claude Code.",
+      foot: "Built from data/receipts. Scan a bill above, or run the bill-scanner skill in Claude Code.",
       built: "Built {d}.",
     },
     he: {
       dir: "rtl", locale: "he-IL", brand: "מעקב סל",
-      tab_dash: "לוח מחוונים", tab_scan: "סריקת חשבונית", tab_ask: "שאלות",
-      demo_switch: "נתוני דמו", demo_pill: "נתוני דמו פעילים",
-      demo_text: "משולבות {n} חשבוניות סינתטיות כדי שיהיה מה להשוות. חשבוניות אמיתיות שנסרקו: {r}. הסר את הסימון כדי לראות רק את שלך.",
+      tab_dash: "לוח", tab_scan: "סריקה", tab_ask: "שאלות",
       all_time: "כל התקופה", last_n: "{n} חודשים אחרונים", all_stores: "כל החנויות", all_cats: "כל הקטגוריות",
-      search_ph: "חיפוש פריט…", no_receipts: "אין חשבוניות בתצוגה",
+      search_ph: "חיפוש פריט…", no_receipts: "עוד לא נסרק דבר",
       rate_ph: "שער", rate_title: "כמה {c} בשקל אחד — לתצוגה בלבד",
-      kpi_total: "סך ההוצאה", kpi_avg: "סל ממוצע", kpi_over: "שילמת מעבר לזול ביותר",
-      kpi_vat: 'מע"מ ששולם', kpi_max: "השורה היקרה ביותר",
-      kpi_total_note: "{n} חשבוניות · {l} שורות", kpi_avg_note: "ב-{n} חנויות",
-      kpi_over_note: "{n} מוצרים עם מחיר ב-2 חנויות ומעלה", kpi_over_none: "צריך אותו מוצר ב-2 חנויות",
-      kpi_vat_note: "18% במקום שחויב",
+      hero_label: "סך ההוצאה", hero_sub: "{n} חשבוניות · {l} שורות",
+      hero_vat: 'מע"מ ששולם', hero_avg: "סל ממוצע", hero_over: "תשלום עודף",
+      st_items: "פריטים שנקנו", st_priciest: "השורה היקרה", st_stores: "חנויות", st_flagged: "דורש בדיקה",
+      st_items_n: "ב-{n} קטגוריות", st_flagged_n: "שורות שהסורק לא היה בטוח בהן",
+      st_flagged_ok: "כל השורות נקראו בבירור",
       h_months: "הוצאה לפי חודש", s_months: "כל הקניות, מסוכמות לפי החודש שבו נעשו.",
       h_cats: "לאן הכסף הולך", s_cats: "חלוקת ההוצאה לפי קטגוריה.",
       h_index: "מדד מחירי הסל", hint_index: "100 = החודש הראשון",
       s_index: "אותם מוצרים, אותה חנות — מה עשה מחיר המדף לאורך זמן.",
       h_stores: "רמת מחירים לפי חנות", hint_stores: "100 = הזולה ביותר",
-      s_stores: "נספרים רק מוצרים שקנית ביותר מחנות אחת.",
+      s_stores: "נספרים רק מוצרים שנקנו ביותר מחנות אחת.",
       h_compare: "אותו מוצר, חנות אחרת",
       s_compare: 'המחיר האחרון בכל חנות, לפי ק"ג, ליטר או יחידה.',
       h_movers: "שינויי מחיר", hint_movers: "ראשון ← אחרון",
@@ -431,46 +564,57 @@
       col_items: "פריטים", col_total: 'סה"כ', col_item: "פריט", col_category: "קטגוריה",
       col_qty: "כמות", col_unit_price: "מחיר ליחידה", col_base: 'לק"ג / ליטר / יח\'', col_paid: "שולם",
       other_cats: "{n} קטגוריות קטנות", other_cats_t: "קטגוריות אחרות",
+      first_t: "אין עדיין חשבוניות", first_d: "סרוק את החשבונית הראשונה והמספרים יופיעו כאן.",
+      scan_cta: "סרוק חשבונית",
       e_range_t: "אין נתונים בטווח", e_range_d: "הרחב את התקופה או נקה את הסינון.",
       e_hist_t: "אין עדיין מספיק היסטוריה",
-      e_hist_d: "צריך אותו מוצר בשני חודשים שונים. סרוק את החשבונית של החודש הבא וזה יתמלא.",
-      e_stores_t: "צריך שתי חנויות", e_stores_d: "קנה אותו מוצר בחנות נוספת וזה ידרג אותן בשבילך.",
+      e_hist_d: "צריך אותו מוצר בשני חודשים שונים. סרוק את הקנייה של החודש הבא וזה יתמלא.",
+      e_stores_t: "בינתיים חנות אחת", e_stores_d: "סרוק חשבונית מחנות שנייה וזה ידרג אותן לפי מה שאתה באמת קונה.",
       e_overlap_t: "אין עדיין חפיפה",
-      e_overlap_d: "הטבלה משווה מחיר של מוצר בין חנויות — צריך אותו ברקוד בחשבוניות משתי חנויות.",
+      e_overlap_d: "כאן משווים מחיר של מוצר בין חנויות — צריך אותו ברקוד בחשבוניות משתי חנויות.",
       e_repeat_t: "אין עדיין קניות חוזרות",
-      e_repeat_d: "ברגע שתקנה אותו מוצר פעמיים באותה חנות, שינוי המחיר יופיע כאן.",
+      e_repeat_d: "קנה אותו מוצר פעמיים באותה חנות ושינוי המחיר יופיע כאן.",
       e_lines_t: "אין שורות מתאימות", e_lines_d: "נקה את החיפוש או הרחב את התקופה.",
       e_norec_t: "אין חשבוניות בטווח", e_norec_d: "נקה סינון כדי לראות אותן.",
-      low_conf: "⚑ ודאות נמוכה — בדוק מול החשבונית",
+      low_conf: "בדוק מול החשבונית",
       showing_first: "מוצגות 250 השורות הראשונות מתוך {n} — השתמש בחיפוש לצמצום.",
       vs_cheapest: "{v} מול הזולה ביותר (100)", on_shared: "על {n} מוצרים משותפים",
       idx_vs: "מדד {v} · {d}% מול {m}", idx_covered: "{c} מתוך {t} מוצרים קיבלו מחיר חדש",
       receipts_lines: "{v} · {r} חשבוניות · {l} שורות",
-      h_scan: "סריקת חשבונית", s_scan: "צלם את החשבונית, גרור אותה לכאן, וקלוד יקרא אותה לתוך הנתונים.",
-      drop_title: "גרור לכאן תמונת חשבונית", drop_sub: "JPEG, PNG או WebP — צילום ישר של כל החשבונית נקרא הכי טוב.",
-      pick: "בחר תמונה", scanning: "קורא את החשבונית…", scan_stop: "עצור",
-      scan_again: "סרוק עוד אחת", scan_save: "שמור לחשבוניות שלי", scan_download: "הורד JSON",
-      scan_saved: "נשמר. זה כבר בלוח המחוונים.", scan_saving: "שומר…",
-      scan_unavailable: "הסריקה פועלת באפליקציה המפורסמת, שם קלוד יכול לקרוא את התמונה. פתח את קישור הארטיפקט, או השתמש במיומנות bill-scanner ב-Claude Code.",
-      scan_nogrant: "הגישה לקלוד נדחתה בדף הזה, ולכן אי אפשר לקרוא את התמונה כאן.",
+      h_scan: "סריקת חשבונית", s_scan: "צלם את החשבונית וקלוד יקרא אותה לתוך הנתונים.",
+      drop_title: "צלם את החשבונית", drop_sub: "או גרור לכאן תמונה. צילום ישר של כל החשבונית נקרא הכי טוב.",
+      take: "צלם", pick: "בחר קובץ",
+      scanning: "קורא את החשבונית…", scan_stop: "עצור", scan_again: "סרוק עוד אחת",
+      scan_save: "שמור", scan_download: "הורד JSON",
+      scan_saved: "נשמר — זה כבר בלוח.", scan_saving: "שומר…",
       scan_failed: "לא הצלחתי לקרוא את התמונה: {m}",
-      scan_nodb: "אין לאן לשמור בתצוגה הזו — הורד את ה-JSON והכנס אותו ל-data/receipts/.",
       scan_checks_ok: "סכום השורות תואם לסכום המודפס.",
-      scan_checks_bad: "בדוק את אלה לפני השמירה: {m}",
+      scan_checks_bad: "בדוק לפני השמירה: {m}",
       scan_dup: "כבר שמורה חשבונית עם המספר הזה. שמירה תדרוס אותה.",
-      h_saved: "נסרק באפליקציה", s_saved: "חשבוניות שנשמרו ממסך הסריקה, מאוחסנות עם האפליקציה.",
-      saved_none_t: "עוד לא נסרק דבר", saved_none_d: "חשבוניות שתסרוק כאן נשמרות עם האפליקציה ומופיעות בלוח המחוונים.",
+      engine_sample: "דרך קלוד בדף הזה", engine_native: "דרך מפתח ה-API שלך", engine_none: "לא מוגדר",
+      blocked_t: "לסריקה נדרש קלוד",
+      blocked_d: "באפליקציה הזו — הוסף מפתח Anthropic API למטה והסריקה תעבוד. בארטיפקט המפורסם היא רצה על חשבון הקלוד שלך בלי מפתח בכלל.",
+      settings_title: "הגדרות — מפתח Anthropic API",
+      key_label: "מפתח Anthropic API",
+      key_help: "נשמר רק במכשיר הזה, באפליקציה הזו. הוא נשלח רק ל-api.anthropic.com ולא נארז יחד עם האפליקציה — כל מי שמתקין צריך מפתח משלו. עלות סריקה כ-0.09$ על חשבון ה-API שלך.",
+      key_save: "שמור", key_clear: "מחק",
+      key_set: "יש מפתח שמור במכשיר. הסריקה והשאלות פעילות.",
+      key_none: "אין מפתח שמור. אפשר להנפיק ב-console.anthropic.com ← API keys.",
+      key_bad: "זה לא נראה כמו מפתח של Anthropic (הם מתחילים ב-sk-ant-).",
+      h_saved: "נסרק באפליקציה", s_saved: "חשבוניות שסרקת כאן, נשמרות עם האפליקציה.",
+      saved_none_t: "עוד לא נסרק כאן דבר", saved_none_d: "חשבוניות שתסרוק כאן יופיעו ברשימה הזו ובלוח.",
       delete: "מחק", confirm_delete: "למחוק את החשבונית?",
-      h_ask: "שאל על ההוצאות שלך", s_ask: "שאלות בשפה חופשית, עם תשובות מהחשבוניות שבאפליקציה.",
+      h_ask: "שאל על ההוצאות שלך", s_ask: "שאלות בשפה חופשית, עם תשובות מהחשבוניות שלך.",
       ask_ph: "למשל: כמה הוצאתי על בשר בחודש שעבר?", ask_send: "שאל", ask_stop: "עצור",
       ask_thinking: "חושב…",
-      ask_unavailable: "מסך ה-AI פועל באפליקציה המפורסמת, שם קלוד יכול לענות. פתח את קישור הארטיפקט כדי להשתמש בו.",
-      ask_note: "התשובות מבוססות רק על נתוני החשבוניות באפליקציה — הסינון בלוח לא מגביל אותן. קלוד יכול לטעות; בדוק כל דבר חשוב.",
+      ask_blocked_t: "לשאלות נדרש קלוד",
+      ask_blocked_d: "הוסף מפתח Anthropic API בלשונית הסריקה, או פתח את הארטיפקט המפורסם שבו זה רץ על חשבון הקלוד שלך.",
+      ask_note: "התשובות מבוססות רק על החשבוניות באפליקציה. קלוד יכול לטעות — בדוק כל דבר חשוב.",
       ask_failed: "זה לא עבד: {m}",
       s1: "איזו חנות הכי זולה בשבילי?", s2: "מה התייקר הכי הרבה?",
-      s3: "איפה אני יכול לחסוך?", s4: "סכם לי את החודש שעבר",
+      s3: "איפה אני יכול לחסוך?", s4: "סכם לי את החודש",
       you: "אתה", claude: "קלוד",
-      foot: "נבנה מ-data/receipts/*.json. סרוק חשבונית למעלה, או הרץ את מיומנות bill-scanner ב-Claude Code.",
+      foot: "נבנה מ-data/receipts. סרוק חשבונית למעלה, או הרץ את מיומנות bill-scanner ב-Claude Code.",
       built: "נבנה {d}.",
     },
   };
@@ -480,17 +624,19 @@
     he: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יוני", "יולי", "אוג", "ספט", "אוק", "נוב", "דצמ"],
   };
 
-  const state = {
-    lang: "en", currency: "ILS", rate: null, tab: "dash",
-    demo: true, period: "all", store: "all", cat: "all", q: "",
-    sortLines: { key: "total", dir: -1 },
-  };
   const store = {
     get(k, d) { try { const v = localStorage.getItem("bw." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem("bw." + k, JSON.stringify(v)); } catch (e) { /* private window */ } },
+    set(k, v) { try { localStorage.setItem("bw." + k, JSON.stringify(v)); } catch (e) { /* private mode */ } },
+    del(k) { try { localStorage.removeItem("bw." + k); } catch (e) { /* ignore */ } },
+  };
+  const state = {
+    lang: "en", currency: "ILS", rate: null, tab: "dash",
+    period: "all", store: "all", cat: "all", q: "",
+    sortLines: { key: "total", dir: -1 },
   };
   state.lang = store.get("lang", "en") === "he" ? "he" : "en";
-  state.currency = CURRENCIES.includes(store.get("currency", "ILS")) ? store.get("currency", "ILS") : "ILS";
+  const savedCur = store.get("currency", "ILS");
+  state.currency = CURRENCIES.includes(savedCur) ? savedCur : "ILS";
   state.rate = Number(store.get("rate", null)) || null;
 
   const L = () => I18N[state.lang];
@@ -505,24 +651,23 @@
   };
   const monthLabel = (m) => MONTHS[state.lang][Number(m.slice(5, 7)) - 1] + " " + m.slice(2, 4);
 
-  /* ======================= money ======================= */
+  /* ========================= money ========================= */
   const fmtCache = new Map();
   function fmt(currency, digits) {
     const key = state.lang + currency + digits;
     if (!fmtCache.has(key)) {
-      fmtCache.set(key, new Intl.NumberFormat(L().locale, {
-        style: "currency", currency, maximumFractionDigits: digits, minimumFractionDigits: digits === 0 ? 0 : undefined,
-      }));
+      fmtCache.set(key, new Intl.NumberFormat(L().locale, { style: "currency", currency, maximumFractionDigits: digits }));
     }
     return fmtCache.get(key);
   }
   const converting = () => state.currency !== "ILS" && state.rate > 0;
+  // Amounts are recorded in shekels. Another currency shows only once the viewer
+  // supplies a rate — we never invent an exchange rate.
   function money(v, digits) {
     const d = digits == null ? 2 : digits;
-    // Amounts are recorded in shekels. Another currency is shown only once the
-    // viewer supplies a rate — we never invent an exchange rate.
-    if (converting()) return fmt(state.currency, d).format((v || 0) * state.rate);
-    return fmt("ILS", d).format(v || 0);
+    const out = converting() ? fmt(state.currency, d).format((v || 0) * state.rate) : fmt("ILS", d).format(v || 0);
+    // The mono face has no ₪ glyph; the fallback one crowds the first digit, so give it air.
+    return out.replace(/^([^\d\s-]+)(?=[\d-])/, "$1\u2009");
   }
   const money0 = (v) => money(v, 0);
   const pct = (n) => (n > 0 ? "+" : "") + n.toFixed(1) + "%";
@@ -558,7 +703,7 @@
     return (r.items || []).map((item) => {
       const [price, unit] = basePrice(item);
       return {
-        receipt_id: r.receipt_id, demo: !!r.demo, date: when.slice(0, 10), month: when.slice(0, 7),
+        receipt_id: r.receipt_id, date: when.slice(0, 10), month: when.slice(0, 7),
         merchant_slug: m.slug || "unknown", merchant_name: m.name || "Unknown",
         line: item.line, barcode: item.barcode || null, name: item.name || "", name_en: item.name_en || "",
         category: item.category || "other", quantity: Math.round((Number(item.quantity) || 0) * 1e3) / 1e3,
@@ -566,67 +711,238 @@
         total: Math.round((Number(item.total) || 0) * 100) / 100,
         product_key: productKey(item), base_price: price, base_qty: baseQty(item), base_unit: unit,
         confidence: item.confidence == null ? null : Number(item.confidence),
-        scanned_here: true,
       };
     });
   }
   function receiptCard(r) {
     const totals = r.totals || {};
     return {
-      receipt_id: r.receipt_id, demo: !!r.demo, date: (r.purchased_at || "").slice(0, 10),
+      receipt_id: r.receipt_id, date: (r.purchased_at || "").slice(0, 10),
       merchant_slug: (r.merchant || {}).slug || "unknown", merchant_name: (r.merchant || {}).name || "Unknown",
       total: Math.round((Number(totals.total) || 0) * 100) / 100,
       items_count: totals.items_count || (r.items || []).length,
       vat_amount: Math.round((Number(totals.vat_amount) || 0) * 100) / 100,
-      scanned_here: true,
     };
   }
-  /** Same arithmetic the Python validator enforces, so a scan is checked before it is saved. */
+  /** The same arithmetic the Python validator enforces, run before a scan can be saved. */
   function checkReceipt(r) {
-    const problems = [];
-    const items = r.items || [];
+    const problems = [], items = r.items || [];
     if (!items.length) problems.push("no items");
     items.forEach((i) => {
       const expect = Math.round((Number(i.quantity) || 0) * (Number(i.unit_price) || 0) * 100) / 100;
       if (Math.abs(expect - (Number(i.total) || 0)) > 0.02) {
-        problems.push(`line ${i.line}: ${i.quantity} × ${i.unit_price} = ${expect.toFixed(2)} ≠ ${Number(i.total).toFixed(2)}`);
+        problems.push("line " + i.line + ": " + i.quantity + " × " + i.unit_price + " = " + expect.toFixed(2) + " ≠ " + Number(i.total).toFixed(2));
       }
     });
     const stated = Number((r.totals || {}).total);
     if (stated) {
       const lineSum = Math.round(sum(items, (i) => Number(i.total) || 0) * 100) / 100;
-      if (Math.abs(lineSum - stated) > 0.05) problems.push(`lines sum to ${lineSum.toFixed(2)}, receipt says ${stated.toFixed(2)}`);
+      if (Math.abs(lineSum - stated) > 0.05) problems.push("lines sum to " + lineSum.toFixed(2) + ", receipt says " + stated.toFixed(2));
     }
     return problems;
   }
 
-  /* ======================= the working set ======================= */
-  let scanned = [];                                   // receipts saved in this app (db)
-  const allRows = () => DATA.rows.concat(...scanned.map(flattenReceipt));
-  const allReceipts = () => DATA.receipts.concat(scanned.map(receiptCard))
+  /* ========================= talking to Claude =========================
+     Three ways in, tried in this order:
+       "sample" — the published artifact's own runtime. Free to the page owner,
+                  billed to whoever opens it. No key anywhere.
+       "key"    — this device's own Anthropic API key. In the Android app the
+                  request goes through a tiny native bridge, which sidesteps
+                  browser CORS entirely; elsewhere it is a plain fetch.
+       "none"   — no way to reach Claude: the scan and ask screens say so.        */
+  const AI = {
+    mode: "none", sample: null, imageLimits: null, native: null, _cb: 0, _pending: {},
+
+    key() { return String(store.get("apikey", "") || ""); },
+    hasKey() { return this.key().length > 10; },
+
+    async init() {
+      const claude = window.claude;
+      if (claude && typeof claude.use === "function") {
+        this.sample = await claude.use("sample").catch(() => null);
+        if (this.sample) {
+          const lim = await this.sample.limits().catch(() => null);
+          this.imageLimits = (lim && lim.images) || null;
+        }
+      }
+      this.native = (window.BasketWatchNative && typeof window.BasketWatchNative.post === "function")
+        ? window.BasketWatchNative : null;
+      window.__nativePost = (id, status, text) => {
+        const fn = this._pending[id];
+        if (fn) { delete this._pending[id]; fn(status, text); }
+      };
+      this.refresh();
+    },
+    refresh() {
+      this.mode = this.sample ? "sample" : (this.hasKey() ? "key" : "none");
+      return this.mode;
+    },
+
+    _post(body) {
+      const key = this.key();
+      if (this.native) {
+        return new Promise((resolve, reject) => {
+          const id = "cb" + (++this._cb);
+          this._pending[id] = (status, text) => {
+            let parsed = null;
+            try { parsed = JSON.parse(text); } catch (e) { /* non-JSON body */ }
+            if (!parsed) return reject({ code: "bad_response", message: String(text).slice(0, 300) });
+            if (status >= 400 || parsed.error) {
+              return reject({ code: (parsed.error && parsed.error.type) || ("http_" + status),
+                              message: (parsed.error && parsed.error.message) || ("HTTP " + status) });
+            }
+            resolve(parsed);
+          };
+          try { this.native.post(key, JSON.stringify(body), id); }
+          catch (e) { delete this._pending[id]; reject({ code: "native_error", message: String(e) }); }
+        });
+      }
+      return fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": key,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
+        body: JSON.stringify(body),
+      }).then(async (res) => {
+        const parsed = await res.json().catch(() => null);
+        if (!parsed) throw { code: "bad_response", message: "HTTP " + res.status };
+        if (!res.ok || parsed.error) {
+          throw { code: (parsed.error && parsed.error.type) || ("http_" + res.status),
+                  message: (parsed.error && parsed.error.message) || ("HTTP " + res.status) };
+        }
+        return parsed;
+      }, (e) => { throw { code: "network", message: String(e && e.message || e) }; });
+    },
+
+    textOf(response) {
+      return (response.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+    },
+    parseJson(text) {
+      const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+      const body = fence ? fence[1] : text;
+      const start = body.search(/[[{]/), end = Math.max(body.lastIndexOf("}"), body.lastIndexOf("]"));
+      if (start < 0 || end <= start) throw { code: "invalid_json", message: text.slice(0, 200) };
+      return JSON.parse(body.slice(start, end + 1));
+    },
+    blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onerror = () => reject({ code: "read_failed", message: "could not read the image" });
+        r.onload = () => resolve(String(r.result).split(",")[1]);
+        r.readAsDataURL(blob);
+      });
+    },
+
+    /** Read an image and return parsed JSON. */
+    async readImage(prompt, blob, opts) {
+      const o = opts || {};
+      if (this.mode === "sample") {
+        return this.sample.json(prompt, { images: [blob], modelTier: "complex", signal: o.signal });
+      }
+      const data = await this.blobToBase64(blob);
+      const response = await this._post({
+        model: "claude-opus-5",
+        max_tokens: 16000,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: blob.type || "image/jpeg", data: data } },
+            { type: "text", text: prompt },
+          ],
+        }],
+      });
+      return this.parseJson(this.textOf(response));
+    },
+
+    /** Ask a text question. Streams where the runtime can; otherwise resolves once. */
+    async askText(turns, opts) {
+      const o = opts || {};
+      if (this.mode === "sample") {
+        const res = await this.sample(turns, { cache: false, signal: o.signal, onText: o.onText });
+        return res.text;
+      }
+      const response = await this._post({
+        model: "claude-opus-5",
+        max_tokens: 8000,
+        messages: turns.map((m) => ({ role: m.role, content: m.content })),
+      });
+      const text = this.textOf(response);
+      if (o.onText) o.onText({ text: text, delta: text });
+      return text;
+    },
+  };
+
+  /* ========================= where receipts live ========================= */
+  const Receipts = {
+    mode: "memory", db: null, assets: null, downloads: null, items: [], notify: function () {},
+
+    async init(onChange) {
+      this.notify = onChange;
+      const claude = window.claude;
+      if (claude && typeof claude.use === "function") {
+        this.db = await claude.use("db").catch(() => null);
+        this.assets = await claude.use("assets").catch(() => null);
+        this.downloads = await claude.use("downloads").catch(() => null);
+      }
+      if (this.db) {
+        this.mode = "db";
+        this.db.collection("receipts").onSnapshot(
+          (snap) => {
+            this.items = snap.docs.map((d) => d.data()).filter((r) => r && r.items && r.receipt_id);
+            this.notify();
+          },
+          () => { /* terminal db error: the page keeps working on built-in data */ },
+        );
+      } else {
+        this.mode = "local";
+        const saved = store.get("receipts", []);
+        this.items = Array.isArray(saved) ? saved.filter((r) => r && r.items && r.receipt_id) : [];
+        this.notify();
+      }
+    },
+    has(id) { return this.items.some((r) => r.receipt_id === id); },
+    async save(receipt) {
+      if (this.mode === "db") { await this.db.collection("receipts").doc(receipt.receipt_id).set(receipt); return; }
+      this.items = this.items.filter((r) => r.receipt_id !== receipt.receipt_id).concat([receipt]);
+      store.set("receipts", this.items);
+      this.notify();
+    },
+    async remove(id) {
+      if (this.mode === "db") { await this.db.collection("receipts").doc(id).delete(); return; }
+      this.items = this.items.filter((r) => r.receipt_id !== id);
+      store.set("receipts", this.items);
+      this.notify();
+    },
+  };
+
+  /* ========================= the working set ========================= */
+  const allRows = () => DATA.rows.concat(...Receipts.items.map(flattenReceipt));
+  const allReceipts = () => DATA.receipts.concat(Receipts.items.map(receiptCard))
     .sort((a, b) => b.date.localeCompare(a.date));
 
   const STORE_SLOTS = {};
   function assignStoreColours() {
-    [...new Set(allRows().map((r) => r.merchant_slug))].sort().forEach((s, i) => {
+    [...new Set(allRows().map((r) => r.merchant_slug))].sort().forEach((s) => {
       if (!STORE_SLOTS[s]) STORE_SLOTS[s] = "--store-" + ((Object.keys(STORE_SLOTS).length % 3) + 1);
     });
   }
-  const storeColor = (s) => css(STORE_SLOTS[s] || "--store-1") || "#2a78d6";
+  const storeColor = (s) => css(STORE_SLOTS[s] || "--store-1") || "#0b7a5e";
   const storeName = (s) => { const r = allRows().find((x) => x.merchant_slug === s); return r ? r.merchant_name : s; };
 
-  /* ======================= filtering ======================= */
+  /* ========================= filtering ========================= */
   function periodStart() {
     if (state.period === "all") return "0000-00-00";
-    const months = Number(state.period);
-    const cards = allReceipts();
+    const months = Number(state.period), cards = allReceipts();
     const last = cards.length ? new Date(cards[0].date) : new Date();
     return new Date(last.getFullYear(), last.getMonth() - months + 1, 1).toISOString().slice(0, 10);
   }
   function visibleRows() {
     const from = periodStart(), q = state.q.trim().toLowerCase();
     return allRows().filter((r) =>
-      (state.demo || !r.demo) && r.date >= from &&
+      r.date >= from &&
       (state.store === "all" || r.merchant_slug === state.store) &&
       (state.cat === "all" || r.category === state.cat) &&
       (!q || r.name.toLowerCase().includes(q) || (r.name_en || "").toLowerCase().includes(q) || String(r.barcode || "").includes(q)));
@@ -636,7 +952,7 @@
     return allReceipts().filter((r) => ids.has(r.receipt_id));
   }
 
-  /* ======================= price intelligence ======================= */
+  /* ========================= price intelligence ========================= */
   function priceBook(rows) {
     const book = new Map();
     rows.forEach((r) => {
@@ -658,14 +974,14 @@
       const p = book.get(r.product_key);
       if (!p || p.stores.size < 2) return;
       let best = null;
-      p.stores.forEach((v, slug) => { if (!best || v.price < best.price) best = { price: v.price, slug }; });
+      p.stores.forEach((v, slug) => { if (!best || v.price < best.price) best = { price: v.price, slug: slug }; });
       if (!best || best.slug === r.merchant_slug) return;
       const diff = (r.base_price - best.price) * r.base_qty;
       if (diff <= 0.01) return;
       lost += diff;
       per.set(r.product_key, (per.get(r.product_key) || 0) + diff);
     });
-    return { lost, per };
+    return { lost: lost, per: per };
   }
   // Matched-model index: every price is compared with the FIRST price of the same
   // product at the same store, so a pricier store entering the data never reads as inflation.
@@ -678,7 +994,7 @@
       const byMonth = new Map();
       sorted.forEach((r) => byMonth.set(r.month, r.base_price));
       if (byMonth.size < 2 || !sorted[0].base_price) return;
-      tracked.push({ byMonth, base: sorted[0].base_price, weight: sum(sorted, (r) => r.total) / sorted.length });
+      tracked.push({ byMonth: byMonth, base: sorted[0].base_price, weight: sum(sorted, (r) => r.total) / sorted.length });
     });
     if (!tracked.length) return [];
     const raw = [];
@@ -711,7 +1027,7 @@
         p.stores.forEach((v) => { best = Math.min(best, v.price); });
         cost += here.price; ref += best; n += 1;
       });
-      return { slug, name: storeName(slug), n, value: ref ? (cost / ref) * 100 : null };
+      return { slug: slug, name: storeName(slug), n: n, value: ref ? (cost / ref) * 100 : null };
     }).filter((s) => s.n >= 2 && s.value).sort((a, b) => a.value - b.value);
   }
   function spreadOf(p) {
@@ -720,7 +1036,7 @@
     return best ? (worst - best) / best : 0;
   }
 
-  /* ======================= tooltip ======================= */
+  /* ========================= tooltip ========================= */
   const tip = $("tip");
   function bindTip(root) {
     root.querySelectorAll("[data-tip]").forEach((el) => {
@@ -738,87 +1054,87 @@
     }
   }
 
-  /* ======================= charts ======================= */
+  /* ========================= charts ========================= */
   function niceMax(v) {
     if (v <= 0) return 1;
     const mag = Math.pow(10, Math.floor(Math.log10(v)));
     return Math.ceil(v / (mag / 2)) * (mag / 2);
   }
-  function emptyState(el, title, detail) {
-    el.innerHTML = '<div class="empty"><strong>' + esc(title) + "</strong><br>" + esc(detail) + "</div>";
+  const EMPTY_ICON = '<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v17l-2.3-2-2.3 2-2.4-2-2.3 2-2.4-2L5 20z"/><path d="M9 8h6M9 12h6"/></svg></span>';
+  function emptyState(el, title, detail, withCta) {
+    el.innerHTML = '<div class="empty">' + EMPTY_ICON + "<strong>" + esc(title) + "</strong><span>" + esc(detail) + "</span>" +
+      (withCta ? '<button type="button" class="btn btn-primary">' + esc(t("scan_cta")) + "</button>" : "") + "</div>";
+    if (withCta) { const b = el.querySelector("button"); if (b) b.onclick = () => setTab("scan"); }
   }
-  // Time runs left-to-right in both languages; only the category/store bars mirror.
+  // Time runs left-to-right in both languages; only the category and store bars mirror.
   function columnChart(el, data, label) {
-    const W = Math.max(el.clientWidth || 320, 260), H = 210;
-    const padL = 6, padR = 6, padT = 26, padB = 26;
+    const W = Math.max(el.clientWidth || 320, 260), H = 200;
+    const padL = 6, padR = 6, padT = 26, padB = 24;
     const inner = W - padL - padR, plotH = H - padT - padB;
     const max = niceMax(Math.max(...data.map((d) => d.value)));
-    const step = inner / data.length, bw = Math.min(46, step * 0.62);
-    const ink = css("--ink-2"), muted = css("--muted"), line = css("--hairline-2");
-    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(label) + '">';
+    const step = inner / data.length, bw = Math.min(44, step * 0.6);
+    const ink = css("--ink-2"), muted = css("--muted"), line = css("--hairline-2"), mark = css("--accent-mark");
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" direction="ltr" role="img" aria-label="' + esc(label) + '">';
     for (let i = 0; i <= 2; i++) {
       const y = padT + (plotH * i) / 2;
       s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y + '" y2="' + y + '" stroke="' + line + '" stroke-width="1"/>';
     }
     data.forEach((d, i) => {
-      const h = Math.max(2, (d.value / max) * plotH);
+      const h = Math.max(3, (d.value / max) * plotH);
       const x = padL + i * step + (step - bw) / 2, y = padT + plotH - h;
-      s += '<rect class="mark" x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="4" fill="' +
-           (d.color || css("--accent")) + '" data-tip="' + esc(d.tip) + '"/>';
+      s += '<rect class="mark" x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="5" fill="' + mark + '" data-tip="' + esc(d.tip) + '"/>';
       s += '<text x="' + (x + bw / 2) + '" y="' + (y - 7) + '" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="' + ink + '">' + esc(d.valueLabel) + "</text>";
-      s += '<text x="' + (x + bw / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="' + muted + '">' + esc(d.label) + "</text>";
+      s += '<text x="' + (x + bw / 2) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="11" fill="' + muted + '">' + esc(d.label) + "</text>";
     });
     el.innerHTML = s + "</svg>";
     bindTip(el);
   }
   function barChart(el, data, label) {
-    const W = Math.max(el.clientWidth || 320, 260);
-    const rtl = L().dir === "rtl";
-    const rowH = 27, gap = 7, padT = 4, H = padT + data.length * (rowH + gap);
-    const labelW = Math.min(150, Math.max(92, W * 0.34)), valueW = 74;
-    const track = Math.max(40, W - labelW - valueW - 12);
+    const W = Math.max(el.clientWidth || 320, 260), rtl = L().dir === "rtl";
+    const rowH = 30, gap = 6, padT = 2, H = padT + data.length * (rowH + gap);
+    const labelW = Math.min(148, Math.max(90, W * 0.36)), valueW = 70;
+    const track = Math.max(40, W - labelW - valueW - 10);
     const max = Math.max(...data.map((d) => d.value)) || 1;
-    const ink = css("--ink"), ink2 = css("--ink-2");
-    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(label) + '">';
+    const ink = css("--ink"), ink2 = css("--ink-2"), mark = css("--accent-mark");
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" direction="ltr" role="img" aria-label="' + esc(label) + '">';
     data.forEach((d, i) => {
-      const y = padT + i * (rowH + gap), w = Math.max(2, (d.value / max) * track);
+      const y = padT + i * (rowH + gap), w = Math.max(3, (d.value / max) * track);
       const barX = rtl ? W - labelW - w : labelW;
       const labelX = rtl ? W : 0, valueX = rtl ? barX - 8 : barX + w + 8;
       const anchor = rtl ? "end" : "start";
       s += '<text x="' + labelX + '" y="' + (y + rowH / 2 + 4) + '" text-anchor="' + anchor + '" font-size="12.5" fill="' + ink2 + '">' + esc(d.label) + "</text>";
-      s += '<rect class="mark" x="' + barX + '" y="' + (y + 4) + '" width="' + w + '" height="' + (rowH - 8) + '" rx="4" fill="' +
-           (d.color || css("--accent")) + '" data-tip="' + esc(d.tip) + '"/>';
+      s += '<rect class="mark" x="' + barX + '" y="' + (y + 5) + '" width="' + w + '" height="' + (rowH - 10) + '" rx="5" fill="' + (d.color || mark) + '" data-tip="' + esc(d.tip) + '"/>';
       s += '<text x="' + valueX + '" y="' + (y + rowH / 2 + 4) + '" text-anchor="' + anchor + '" font-size="12" font-family="IBM Plex Mono, monospace" fill="' + ink + '">' + esc(d.valueLabel) + "</text>";
     });
     el.innerHTML = s + "</svg>";
     bindTip(el);
   }
   function lineChart(el, points, label) {
-    const W = Math.max(el.clientWidth || 320, 260), H = 210;
-    const padL = 40, padR = 16, padT = 22, padB = 26;
+    const W = Math.max(el.clientWidth || 320, 260), H = 200;
+    const padL = 40, padR = 16, padT = 20, padB = 24;
     const inner = W - padL - padR, plotH = H - padT - padB;
     const values = points.map((p) => p.value);
     const lo = Math.min(...values, 100), hi = Math.max(...values, 100);
     const span = Math.max(hi - lo, 4), min = lo - span * 0.25, max = hi + span * 0.25;
     const x = (i) => padL + (points.length === 1 ? inner / 2 : (inner * i) / (points.length - 1));
     const y = (v) => padT + plotH - ((v - min) / (max - min)) * plotH;
-    const accent = css("--accent"), muted = css("--muted"), line = css("--hairline-2"), surface = css("--surface");
-    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(label) + '">';
+    const accent = css("--accent-mark"), muted = css("--muted"), line = css("--hairline-2"), surface = css("--surface");
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" direction="ltr" role="img" aria-label="' + esc(label) + '">';
     [min, (min + max) / 2, max].forEach((v) => {
       s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="' + line + '" stroke-width="1"/>';
       s += '<text x="' + (padL - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="' + muted + '">' + v.toFixed(1) + "</text>";
     });
-    s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(100) + '" y2="' + y(100) + '" stroke="' + muted + '" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>';
+    s += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(100) + '" y2="' + y(100) + '" stroke="' + muted + '" stroke-width="1" stroke-dasharray="3 3" opacity="0.55"/>';
     s += '<text x="' + (W - padR) + '" y="' + (y(100) - 5) + '" text-anchor="end" font-size="10" fill="' + muted + '">100</text>';
     const d = points.map((p, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(p.value).toFixed(1)).join(" ");
-    const area = d + " L" + x(points.length - 1).toFixed(1) + " " + (padT + plotH) + " L" + x(0).toFixed(1) + " " + (padT + plotH) + " Z";
-    s += '<path d="' + area + '" fill="' + accent + '" opacity="0.08"/>';
+    s += '<path d="' + d + " L" + x(points.length - 1).toFixed(1) + " " + (padT + plotH) + " L" + x(0).toFixed(1) + " " + (padT + plotH) +
+         ' Z" fill="' + accent + '" opacity="0.09"/>';
     s += '<path d="' + d + '" fill="none" stroke="' + accent + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
     points.forEach((p, i) => {
       const last = i === points.length - 1;
       s += '<circle class="mark" cx="' + x(i) + '" cy="' + y(p.value) + '" r="' + (last ? 5.5 : 4) + '" fill="' + (last ? accent : surface) +
            '" stroke="' + accent + '" stroke-width="2" data-tip="' + esc(p.tip) + '"/>';
-      s += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="' + muted + '">' + esc(p.label) + "</text>";
+      s += '<text x="' + x(i) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="11" fill="' + muted + '">' + esc(p.label) + "</text>";
     });
     const lastP = points[points.length - 1];
     s += '<text x="' + x(points.length - 1) + '" y="' + (y(lastP.value) - 12) + '" text-anchor="end" font-size="11.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="' + accent + '">' + lastP.value.toFixed(1) + "</text>";
@@ -826,26 +1142,58 @@
     bindTip(el);
   }
 
-  /* ======================= dashboard ======================= */
-  function kpi(label, value, note, flagged) {
-    return '<div class="kpi' + (flagged ? " flagged" : "") + '"><div class="k-label">' + esc(label) +
-      '</div><div class="k-value">' + esc(value) + '</div><div class="k-note">' + esc(note) + "</div></div>";
+  /* ========================= dashboard ========================= */
+  function statTile(label, value, note) {
+    return '<div class="stat"><div class="eyebrow">' + esc(label) + '</div><div class="v">' + esc(value) + '</div><div class="n">' + esc(note) + "</div></div>";
   }
   function renderDash() {
     const rows = visibleRows(), receipts = visibleReceipts(rows), book = priceBook(rows);
     const spend = sum(rows, (r) => r.total), over = overpay(rows, book);
+    const stores = new Set(rows.map((r) => r.merchant_slug));
+    const flagged = rows.filter((r) => r.confidence != null && r.confidence < 0.8);
 
-    $("range-tick").textContent = receipts.length ? receipts[receipts.length - 1].date + " → " + receipts[0].date : t("no_receipts");
-    const vat = sum(receipts, (r) => r.vat_amount || 0);
-    const tracked = [...book.values()].filter((p) => p.stores.size >= 2).length;
+    $("range-tick").textContent = receipts.length
+      ? (receipts.length > 1 ? receipts[receipts.length - 1].date + " → " + receipts[0].date : receipts[0].date)
+      : t("no_receipts");
+
+    $("hero-total").textContent = money(spend);
+    $("hero-sub").textContent = t("hero_sub", { n: receipts.length, l: rows.length });
+    const side = [
+      { l: t("hero_avg"), v: money(receipts.length ? spend / receipts.length : 0) },
+      { l: t("hero_vat"), v: money(sum(receipts, (r) => r.vat_amount || 0)) },
+    ];
+    if (over.lost > 0.5) side.push({ l: t("hero_over"), v: money(over.lost), warn: true });
+    $("hero-side").innerHTML = side.map((s) =>
+      '<div><span class="eyebrow">' + esc(s.l) + '</span><span class="v' + (s.warn ? " warn" : "") + '">' + esc(s.v) + "</span></div>").join("");
+
     const maxLine = rows.length ? rows.reduce((a, b) => (b.total > a.total ? b : a)) : null;
-    $("kpis").innerHTML = [
-      kpi(t("kpi_total"), money(spend), t("kpi_total_note", { n: receipts.length, l: rows.length })),
-      kpi(t("kpi_avg"), money(receipts.length ? spend / receipts.length : 0), t("kpi_avg_note", { n: new Set(receipts.map((r) => r.merchant_slug)).size })),
-      kpi(t("kpi_over"), money(over.lost), tracked ? t("kpi_over_note", { n: tracked }) : t("kpi_over_none"), over.lost > 0.5),
-      kpi(t("kpi_vat"), money(vat), t("kpi_vat_note")),
-      kpi(t("kpi_max"), maxLine ? money(maxLine.total) : "—", maxLine ? (state.lang === "he" ? maxLine.name : (maxLine.name_en || maxLine.name)) + " · " + maxLine.merchant_name : "—"),
+    const cats = [...groupBy(rows, (r) => r.category).entries()]
+      .map(([c, rs]) => ({ c: c, v: sum(rs, (x) => x.total), n: rs.length })).sort((a, b) => b.v - a.v);
+    $("stats").innerHTML = [
+      statTile(t("st_items"), String(rows.length), t("st_items_n", { n: cats.length })),
+      statTile(t("st_priciest"), maxLine ? money(maxLine.total) : "—",
+        maxLine ? (state.lang === "he" ? maxLine.name : (maxLine.name_en || maxLine.name)) : "—"),
+      statTile(t("st_stores"), String(stores.size), [...stores].map(storeName).join(", ") || "—"),
+      statTile(t("st_flagged"), String(flagged.length),
+        flagged.length ? t("st_flagged_n") : t("st_flagged_ok")),
     ].join("");
+
+    // Categories: one accent hue — the axis labels carry identity, so no colour cycling.
+    if (!cats.length) {
+      emptyState($("c-cats"), t(rows.length || DATA.rows.length ? "e_range_t" : "first_t"),
+        t(rows.length || DATA.rows.length ? "e_range_d" : "first_d"), !DATA.rows.length && !Receipts.items.length);
+      $("cat-hint").textContent = "";
+    } else {
+      const top = cats.slice(0, 7), rest = cats.slice(7);
+      if (rest.length) top.push({ c: "__other", v: sum(rest, (x) => x.v), n: sum(rest, (x) => x.n) });
+      $("cat-hint").textContent = t("cats_n", { n: cats.length });
+      barChart($("c-cats"), top.map((d) => ({
+        label: d.c === "__other" ? t("other_cats", { n: rest.length }) : catLabel(d.c),
+        value: d.v, valueLabel: money0(d.v),
+        tip: "<div class='t-title'>" + esc(d.c === "__other" ? t("other_cats_t") : catLabel(d.c)) + "</div><div class='t-row'>" +
+             money(d.v) + " · " + (spend ? ((d.v / spend) * 100).toFixed(1) : 0) + "% · " + d.n + "</div>",
+      })), t("h_cats"));
+    }
 
     const byMonth = [...groupBy(rows, (r) => r.month).entries()].sort((a, b) => a[0].localeCompare(b[0]));
     if (!byMonth.length) { emptyState($("c-months"), t("e_range_t"), t("e_range_d")); $("spend-hint").textContent = ""; }
@@ -857,22 +1205,6 @@
           tip: "<div class='t-title'>" + monthLabel(m) + "</div><div class='t-row'>" +
                esc(t("receipts_lines", { v: money(v), r: new Set(rs.map((r) => r.receipt_id)).size, l: rs.length })) + "</div>" };
       }), t("h_months"));
-    }
-
-    // One accent hue: the axis labels carry identity, so no colour cycling over 15 categories.
-    const cats = [...groupBy(rows, (r) => r.category).entries()]
-      .map(([c, rs]) => ({ c, v: sum(rs, (x) => x.total), n: rs.length })).sort((a, b) => b.v - a.v);
-    if (!cats.length) { emptyState($("c-cats"), t("e_range_t"), t("e_range_d")); $("cat-hint").textContent = ""; }
-    else {
-      const top = cats.slice(0, 7), rest = cats.slice(7);
-      if (rest.length) top.push({ c: "__other", v: sum(rest, (x) => x.v), n: sum(rest, (x) => x.n) });
-      $("cat-hint").textContent = t("cats_n", { n: cats.length });
-      barChart($("c-cats"), top.map((d) => ({
-        label: d.c === "__other" ? t("other_cats", { n: rest.length }) : catLabel(d.c),
-        value: d.v, valueLabel: money0(d.v),
-        tip: "<div class='t-title'>" + esc(d.c === "__other" ? t("other_cats_t") : catLabel(d.c)) + "</div><div class='t-row'>" +
-             money(d.v) + " · " + (spend ? ((d.v / spend) * 100).toFixed(1) : 0) + "% · " + d.n + "</div>",
-      })), t("h_cats"));
     }
 
     const idx = basketIndex(rows);
@@ -917,10 +1249,10 @@
     shared.slice(0, 18).forEach((p) => {
       let best = Infinity, worst = 0;
       p.stores.forEach((v) => { best = Math.min(best, v.price); worst = Math.max(worst, v.price); });
-      const second = state.lang === "he" ? p.name_en : "";
-      h += "<tr><td class='name'><span dir='auto'>" + esc(state.lang === "he" ? p.name : (p.name_en || p.name)) + "</span>" +
-        (state.lang === "he" ? "" : "<br><span class='sec' dir='auto'>" + esc(p.name) + "</span>") +
-        (second ? "<br><span class='sec'>" + esc(second) + "</span>" : "") + "</td>";
+      const primary = state.lang === "he" ? p.name : (p.name_en || p.name);
+      const secondary = state.lang === "he" ? (p.name_en || "") : (p.name !== primary ? p.name : "");
+      h += "<tr><td class='name'><span dir='auto'>" + esc(primary) + "</span>" +
+        (secondary ? "<br><span class='sec' dir='auto'>" + esc(secondary) + "</span>" : "") + "</td>";
       stores.forEach((s) => {
         const v = p.stores.get(s);
         h += '<td class="n">' + (v ? '<span class="' + (v.price === best ? "best" : "") + '">' + money(v.price) + baseUnit(p.unit) + "</span>" : '<span class="sec">—</span>') + "</td>";
@@ -939,7 +1271,7 @@
       const first = sorted[0], last = sorted[sorted.length - 1];
       if (first.date === last.date || !first.base_price) return;
       const change = ((last.base_price - first.base_price) / first.base_price) * 100;
-      if (Math.abs(change) >= 0.5) movers.push({ first, last, change });
+      if (Math.abs(change) >= 0.5) movers.push({ first: first, last: last, change: change });
     });
     if (!movers.length) { emptyState(el, t("e_repeat_t"), t("e_repeat_d")); return; }
     movers.sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
@@ -948,7 +1280,6 @@
     movers.slice(0, 10).forEach((m) => {
       const up = m.change > 0, u = baseUnit(m.first.base_unit);
       h += "<tr><td class='name'><span dir='auto'>" + esc(state.lang === "he" ? m.first.name : (m.first.name_en || m.first.name)) + "</span><br><span class='sec'>" +
-        "<span class='dot' style='display:inline-block;background:" + storeColor(m.first.merchant_slug) + "'></span> " +
         "<span dir='auto'>" + esc(m.first.merchant_name) + "</span> · " + esc(m.first.date) + " → " + esc(m.last.date) + "</span></td>" +
         '<td class="n">' + money(m.first.base_price) + u + '</td><td class="n">' + money(m.last.base_price) + u + "</td>" +
         '<td class="n ' + (up ? "delta-up" : "delta-down") + '">' + (up ? "▲" : "▼") + " " + pct(m.change) + "</td></tr>";
@@ -958,12 +1289,12 @@
 
   function renderReceipts(receipts) {
     const el = $("t-receipts");
-    $("rec-hint").textContent = t("in_view", { n: receipts.length });
-    if (!receipts.length) { emptyState(el, t("e_norec_t"), t("e_norec_d")); return; }
+    $("rec-hint").textContent = receipts.length ? t("in_view", { n: receipts.length }) : "";
+    if (!receipts.length) { emptyState(el, t("e_norec_t"), t("e_norec_d"), !allReceipts().length); return; }
     let h = '<div class="scroll"><table><thead><tr><th>' + esc(t("col_date")) + "</th><th>" + esc(t("col_store")) +
       '</th><th class="n">' + esc(t("col_items")) + '</th><th class="n">' + esc(t("col_total")) + "</th></tr></thead><tbody>";
     receipts.forEach((r) => {
-      h += "<tr><td>" + esc(r.date) + (r.demo ? ' <span class="tag">demo</span>' : "") + "</td>" +
+      h += "<tr><td>" + esc(r.date) + "</td>" +
         "<td><span class='chip'><span class='dot' style='background:" + storeColor(r.merchant_slug) + "'></span><span dir='auto'>" + esc(r.merchant_name) + "</span></span></td>" +
         '<td class="n">' + r.items_count + '</td><td class="n">' + money(r.total) + "</td></tr>";
     });
@@ -978,9 +1309,9 @@
   ];
   function renderLines(rows) {
     const el = $("t-lines");
-    $("lines-hint").textContent = t("lines_n", { n: rows.length });
-    if (!rows.length) { emptyState(el, t("e_lines_t"), t("e_lines_d")); return; }
-    const { key, dir } = state.sortLines;
+    $("lines-hint").textContent = rows.length ? t("lines_n", { n: rows.length }) : "";
+    if (!rows.length) { emptyState(el, t("e_lines_t"), t("e_lines_d"), !allRows().length); return; }
+    const key = state.sortLines.key, dir = state.sortLines.dir;
     const sorted = [...rows].sort((a, b) => {
       const x = a[key], y = b[key];
       return (typeof x === "number" ? x - y : String(x).localeCompare(String(y), state.lang)) * dir;
@@ -989,19 +1320,19 @@
       '<th role="button" tabindex="0" data-key="' + c.key + '" class="' + (c.n ? "n" : "") + '">' + esc(t(c.label)) +
       (key === c.key ? (dir === 1 ? " ▲" : " ▼") : "") + "</th>").join("") + "</tr></thead><tbody>";
     sorted.slice(0, 250).forEach((r) => {
-      const flagged = r.confidence != null && r.confidence < 0.8;
+      const low = r.confidence != null && r.confidence < 0.8;
       const primary = state.lang === "he" ? r.name : (r.name_en || r.name);
       const secondary = state.lang === "he" ? (r.name_en || "") : (r.name !== primary ? r.name : "");
-      h += '<tr class="' + (flagged ? "flagrow" : "") + '">' +
-        "<td>" + esc(r.date) + (r.demo ? ' <span class="tag">demo</span>' : "") + "</td>" +
+      h += '<tr class="' + (low ? "flagrow" : "") + '">' +
+        "<td>" + esc(r.date) + "</td>" +
         "<td class='name'><span dir='auto'>" + esc(primary) + "</span>" +
         (secondary ? "<br><span class='sec' dir='auto'>" + esc(secondary) + "</span>" : "") +
-        (flagged ? '<br><span class="sec">' + esc(t("low_conf")) + "</span>" : "") + "</td>" +
+        (low ? '<br><span class="flagpill">⚑ ' + esc(t("low_conf")) + "</span>" : "") + "</td>" +
         "<td><span class='chip'><span class='dot' style='background:" + storeColor(r.merchant_slug) + "'></span><span dir='auto'>" + esc(r.merchant_name) + "</span></span></td>" +
         "<td class='sec'>" + esc(catLabel(r.category)) + "</td>" +
-        '<td class="n">' + r.quantity + (r.unit === "kg" ? " kg" : "") + '</td>' +
-        '<td class="n">' + money(r.unit_price) + '</td>' +
-        '<td class="n">' + money(r.base_price) + baseUnit(r.base_unit) + '</td>' +
+        '<td class="n">' + r.quantity + (r.unit === "kg" ? " kg" : "") + "</td>" +
+        '<td class="n">' + money(r.unit_price) + "</td>" +
+        '<td class="n">' + money(r.base_price) + baseUnit(r.base_unit) + "</td>" +
         '<td class="n">' + money(r.total) + "</td></tr>";
     });
     h += "</tbody></table></div>";
@@ -1018,49 +1349,7 @@
     });
   }
 
-  /* ======================= capabilities ======================= */
-  const CAP = { sample: null, db: null, assets: null, downloads: null, images: null, tools: null, ready: false };
-
-  async function initCaps() {
-    const claude = window.claude;
-    if (!claude || typeof claude.use !== "function") { CAP.ready = true; paintCapStates(); return; }
-    const [sample, db, assets, downloads] = await Promise.all([
-      claude.use("sample").catch(() => null), claude.use("db").catch(() => null),
-      claude.use("assets").catch(() => null), claude.use("downloads").catch(() => null),
-    ]);
-    CAP.sample = sample; CAP.db = db; CAP.assets = assets; CAP.downloads = downloads;
-    if (sample) {
-      const lim = await sample.limits().catch(() => null);
-      CAP.images = (lim && lim.images) || null;
-      CAP.tools = (lim && lim.tools) || null;
-    }
-    if (db) subscribeReceipts();
-    CAP.ready = true;
-    paintCapStates();
-  }
-  function subscribeReceipts() {                      // subscribe once, never from render
-    CAP.db.collection("receipts").onSnapshot(
-      (snap) => {
-        scanned = snap.docs.map((d) => d.data()).filter((r) => r && r.items && r.receipt_id);
-        assignStoreColours();
-        renderCurrent();
-      },
-      () => { /* terminal db error: the page keeps working on built-in data */ },
-    );
-  }
-  function paintCapStates() {
-    const canScan = !!(CAP.sample && CAP.images);
-    $("scan-ui").hidden = !canScan;
-    $("scan-unavailable").hidden = canScan;
-    if (!canScan) $("scan-unavailable").innerHTML = "<strong>" + esc(t("h_scan")) + "</strong><br>" + esc(t("scan_unavailable"));
-    const canAsk = !!CAP.sample;
-    $("ask-ui").hidden = !canAsk;
-    $("ask-unavailable").hidden = canAsk;
-    if (!canAsk) $("ask-unavailable").innerHTML = "<strong>" + esc(t("h_ask")) + "</strong><br>" + esc(t("ask_unavailable"));
-    if (CAP.images) $("file").accept = CAP.images.mediaTypes.join(",");
-  }
-
-  /* ======================= scan ======================= */
+  /* ========================= scanning ========================= */
   const SCAN_PROMPT = [
     "You are reading a photographed shop receipt. Transcribe it into JSON. Accuracy matters more than",
     "completeness: this feeds a price-comparison database, so a mis-read digit becomes a fake price trend.",
@@ -1098,15 +1387,16 @@
   let scanFile = null, scanReceipt = null, scanCtl = null;
 
   function status(el, text, busy) {
-    el.innerHTML = (busy ? '<span class="spinner"></span>' : "") + "<span>" + esc(text) + "</span>";
+    el.innerHTML = (busy ? '<span class="spinner"></span>' : "") + (text ? "<span>" + esc(text) + "</span>" : "");
   }
   function pickFile(file) {
-    if (!file || !file.type.startsWith("image/")) return;
+    if (!file || !/^image\//.test(file.type || "")) return;
     scanFile = file; scanReceipt = null;
     $("scan-stage").hidden = false;
     $("scan-img").src = URL.createObjectURL(file);
     $("scan-result").innerHTML = "";
     $("scan-actions").innerHTML = "";
+    $("scan-stage").scrollIntoView({ block: "nearest", behavior: "smooth" });
     runScan();
   }
   async function runScan() {
@@ -1116,24 +1406,23 @@
     scanCtl = new AbortController();
     $("scan-stop").onclick = () => scanCtl.abort();
     try {
-      const parsed = await CAP.sample.json(SCAN_PROMPT, {
-        images: [scanFile], modelTier: "complex", signal: scanCtl.signal,
-      });
+      const parsed = await AI.readImage(SCAN_PROMPT, scanFile, { signal: scanCtl.signal });
       scanReceipt = normaliseScan(parsed);
       showScanResult();
     } catch (e) {
-      if (e && e.code === "cancelled") { statusEl.textContent = ""; $("scan-actions").innerHTML = ""; return; }
+      if (e && e.code === "cancelled") { status(statusEl, "", false); $("scan-actions").innerHTML = ""; return; }
       status(statusEl, "", false);
-      const msg = e && e.code === "not_granted" ? t("scan_nogrant") : t("scan_failed", { m: (e && e.code) || "error" });
-      $("scan-result").innerHTML = '<div class="notice notice-bad">' + esc(msg) + "</div>";
+      $("scan-result").innerHTML = '<div class="notice notice-bad">' +
+        esc(t("scan_failed", { m: (e && (e.message || e.code)) || "error" })) + "</div>";
       $("scan-actions").innerHTML = "";
     }
   }
   function normaliseScan(p) {
-    const r = Object.assign({ schema_version: "1.0", demo: false }, p);
+    const r = Object.assign({ schema_version: "1.0" }, p);
     r.items = (r.items || []).map((i, n) => Object.assign({ line: n + 1 }, i));
     const date = String(r.purchased_at || "").slice(0, 10) || new Date().toISOString().slice(0, 10);
-    const mslug = slug((r.merchant || {}).slug || (r.merchant || {}).name_en || (r.merchant || {}).name || "shop").replace(/[^a-z0-9-]/g, "") || "shop";
+    const mslug = slug((r.merchant || {}).slug || (r.merchant || {}).name_en || (r.merchant || {}).name || "shop")
+      .replace(/[^a-z0-9-]/g, "") || "shop";
     if (!r.merchant) r.merchant = { name: "Unknown", slug: mslug };
     r.merchant.slug = mslug;
     const doc = String(((r.document || {}).number) || Date.now()).replace(/[^A-Za-z0-9-]/g, "") || String(Date.now());
@@ -1142,14 +1431,13 @@
     return r;
   }
   function showScanResult() {
-    const r = scanReceipt, problems = checkReceipt(r);
+    const r = scanReceipt, problems = checkReceipt(r), totals = r.totals || {};
     status($("scan-status"), "", false);
-    const totals = r.totals || {};
     let h = "<div class='notice " + (problems.length ? "notice-warn" : "notice-good") + "'>" +
       esc(problems.length ? t("scan_checks_bad", { m: problems.join("; ") }) : t("scan_checks_ok")) + "</div>";
     h += "<div style='font-size:13.5px; margin-bottom:8px'><strong dir='auto'>" + esc((r.merchant || {}).name || "") + "</strong> · " +
       esc((r.purchased_at || "").replace("T", " ")) + " · <span class='num'>" + money(Number(totals.total) || 0) + "</span></div>";
-    h += "<div class='scroll' style='max-height:320px; overflow-y:auto'><table><tbody>";
+    h += "<div class='scroll' style='max-height:300px; overflow-y:auto'><table><tbody>";
     (r.items || []).forEach((i) => {
       const low = i.confidence != null && i.confidence < 0.8;
       h += "<tr" + (low ? " class='flagrow'" : "") + "><td class='name'><span dir='auto'>" + esc(i.name) + "</span>" +
@@ -1158,51 +1446,50 @@
         "<td class='n'>" + money(Number(i.total) || 0) + "</td></tr>";
     });
     h += "</tbody></table></div>";
-    if (scanned.some((s) => s.receipt_id === r.receipt_id)) h += "<div class='notice notice-warn'>" + esc(t("scan_dup")) + "</div>";
-    if (!CAP.db) h += "<div class='notice notice-warn'>" + esc(t("scan_nodb")) + "</div>";
+    if (Receipts.has(r.receipt_id)) h += "<div class='notice notice-warn'>" + esc(t("scan_dup")) + "</div>";
     $("scan-result").innerHTML = h;
 
-    const actions = [];
-    if (CAP.db) actions.push('<button type="button" class="btn btn-primary" id="do-save">' + esc(t("scan_save")) + "</button>");
-    if (CAP.downloads) actions.push('<button type="button" class="btn" id="do-download">' + esc(t("scan_download")) + "</button>");
+    const actions = ['<button type="button" class="btn btn-primary" id="do-save">' + esc(t("scan_save")) + "</button>"];
+    if (Receipts.downloads) actions.push('<button type="button" class="btn" id="do-download">' + esc(t("scan_download")) + "</button>");
     actions.push('<button type="button" class="btn" id="do-again">' + esc(t("scan_again")) + "</button>");
     $("scan-actions").innerHTML = actions.join("");
-    const save = $("do-save"), dl = $("do-download");
-    if (save) save.onclick = saveScan;
-    if (dl) dl.onclick = async () => {
-      await CAP.downloads.save({ filename: r.receipt_id + ".json", data: JSON.stringify(r, null, 2) }).catch(() => {});
-    };
-    $("do-again").onclick = () => {
-      scanFile = null; scanReceipt = null;
-      $("scan-stage").hidden = true; $("file").value = "";
-    };
+    $("do-save").onclick = saveScan;
+    const dl = $("do-download");
+    if (dl) dl.onclick = () => Receipts.downloads.save({ filename: r.receipt_id + ".json", data: JSON.stringify(r, null, 2) }).catch(() => {});
+    $("do-again").onclick = resetScan;
+  }
+  function resetScan() {
+    scanFile = null; scanReceipt = null;
+    $("scan-stage").hidden = true;
+    $("file").value = ""; $("file-camera").value = "";
   }
   async function saveScan() {
     const r = scanReceipt, btn = $("do-save");
     btn.disabled = true;
     status($("scan-status"), t("scan_saving"), true);
     try {
-      if (CAP.assets && scanFile) {
-        const up = await CAP.assets.upload(scanFile).catch(() => null);
+      if (Receipts.assets && scanFile) {
+        const up = await Receipts.assets.upload(scanFile).catch(() => null);
         if (up) { r.source_image = up.url; r.image_id = up.id; }
       }
-      await CAP.db.collection("receipts").doc(r.receipt_id).set(r);
+      await Receipts.save(r);
       status($("scan-status"), t("scan_saved"), false);
       $("scan-actions").innerHTML = '<button type="button" class="btn btn-primary" id="do-again2">' + esc(t("scan_again")) + "</button>";
-      $("do-again2").onclick = () => { scanFile = null; scanReceipt = null; $("scan-stage").hidden = true; $("file").value = ""; };
+      $("do-again2").onclick = resetScan;
     } catch (e) {
       status($("scan-status"), "", false);
-      $("scan-result").insertAdjacentHTML("afterbegin", '<div class="notice notice-bad">' + esc(t("scan_failed", { m: (e && e.code) || "error" })) + "</div>");
+      $("scan-result").insertAdjacentHTML("afterbegin",
+        '<div class="notice notice-bad">' + esc(t("scan_failed", { m: (e && (e.message || e.code)) || "error" })) + "</div>");
       btn.disabled = false;
     }
   }
   function renderSaved() {
-    const el = $("t-saved");
-    $("saved-hint").textContent = scanned.length ? t("in_view", { n: scanned.length }) : "";
-    if (!scanned.length) { emptyState(el, t("saved_none_t"), t("saved_none_d")); return; }
+    const el = $("t-saved"), items = Receipts.items;
+    $("saved-hint").textContent = items.length ? t("in_view", { n: items.length }) : "";
+    if (!items.length) { emptyState(el, t("saved_none_t"), t("saved_none_d")); return; }
     let h = '<div class="scroll"><table><thead><tr><th>' + esc(t("col_date")) + "</th><th>" + esc(t("col_store")) +
       '</th><th class="n">' + esc(t("col_items")) + '</th><th class="n">' + esc(t("col_total")) + "</th><th></th></tr></thead><tbody>";
-    [...scanned].sort((a, b) => String(b.purchased_at).localeCompare(String(a.purchased_at))).forEach((r) => {
+    [...items].sort((a, b) => String(b.purchased_at).localeCompare(String(a.purchased_at))).forEach((r) => {
       h += "<tr><td>" + esc(String(r.purchased_at || "").slice(0, 10)) + "</td>" +
         "<td><span dir='auto'>" + esc((r.merchant || {}).name || "") + "</span></td>" +
         '<td class="n">' + ((r.items || []).length) + '</td><td class="n">' + money(Number((r.totals || {}).total) || 0) + "</td>" +
@@ -1211,88 +1498,49 @@
     el.innerHTML = h + "</tbody></table></div>";
     el.querySelectorAll("[data-del]").forEach((b) => {
       b.onclick = async () => {
-        if (!CAP.db || !confirm(t("confirm_delete"))) return;
+        if (!confirm(t("confirm_delete"))) return;
         b.disabled = true;
-        await CAP.db.collection("receipts").doc(b.dataset.del).delete().catch(() => { b.disabled = false; });
+        await Receipts.remove(b.dataset.del).catch(() => { b.disabled = false; });
       };
     });
   }
 
-  /* ======================= ask ======================= */
+  /* ========================= ask ========================= */
   function askContext() {
     const rows = allRows(), receipts = allReceipts(), book = priceBook(rows);
-    const lines = [];
-    lines.push("DATA SUMMARY (currency ILS, all amounts in shekels)");
-    lines.push("Receipts: " + receipts.length + " (" + receipts.filter((r) => r.demo).length + " are synthetic demo data), " +
-      rows.length + " line items, total spend " + sum(rows, (r) => r.total).toFixed(2));
+    const lines = ["DATA SUMMARY (currency ILS, all amounts in shekels)"];
+    lines.push("Receipts: " + receipts.length + ", " + rows.length + " line items, total spend " + sum(rows, (r) => r.total).toFixed(2));
     const months = [...groupBy(rows, (r) => r.month).entries()].sort((a, b) => a[0].localeCompare(b[0]));
     lines.push("By month: " + months.map(([m, rs]) => m + "=" + sum(rs, (r) => r.total).toFixed(0)).join(", "));
     const bycat = [...groupBy(rows, (r) => r.category).entries()].sort((a, b) => sum(b[1], (r) => r.total) - sum(a[1], (r) => r.total));
     lines.push("By category: " + bycat.map(([c, rs]) => c + "=" + sum(rs, (r) => r.total).toFixed(0)).join(", "));
-    const bystore = [...groupBy(rows, (r) => r.merchant_slug).entries()];
-    lines.push("By store: " + bystore.map(([s, rs]) => storeName(s) + " (" + s + ")=" + sum(rs, (r) => r.total).toFixed(0)).join(", "));
+    lines.push("By store: " + [...groupBy(rows, (r) => r.merchant_slug).entries()]
+      .map(([s, rs]) => storeName(s) + "=" + sum(rs, (r) => r.total).toFixed(0)).join(", "));
     const levels = storeLevels(rows, book);
     if (levels.length) lines.push("Store price level, 100 = cheapest on shared products: " + levels.map((s) => s.name + "=" + s.value.toFixed(1)).join(", "));
     const idx = basketIndex(rows);
     if (idx.length > 1) lines.push("Basket price index (100 = " + idx[0].month + "): " + idx.map((p) => p.month + "=" + p.value.toFixed(1)).join(", "));
     lines.push("");
-    lines.push("PRODUCTS (name | english | category | latest price per store, on a per-kg/per-litre/per-item basis):");
-    [...book.values()].sort((a, b) => sum(b.history, (r) => r.total) - sum(a.history, (r) => r.total)).slice(0, 45).forEach((p) => {
-      const per = [...p.stores.entries()].map(([s, v]) => storeName(s) + " " + v.price.toFixed(2) + "/" + p.unit + " (" + v.date + ")").join("; ");
-      lines.push("- " + p.name + " | " + (p.name_en || "") + " | " + p.category + " | " + per);
+    lines.push("LINE ITEMS (date | name | english | category | qty unit | paid | normalised price):");
+    [...rows].sort((a, b) => b.total - a.total).slice(0, 120).forEach((r) => {
+      lines.push("- " + r.date + " | " + r.name + " | " + (r.name_en || "") + " | " + r.category + " | " +
+        r.quantity + " " + r.unit + " | " + r.total.toFixed(2) + " | " + r.base_price.toFixed(2) + "/" + r.base_unit +
+        " | " + r.merchant_name);
     });
-    return lines.join("\n").slice(0, 24000);
+    return lines.join("\n").slice(0, 22000);
   }
   function askRules() {
     return [
-      "You are the assistant inside a grocery-spending dashboard called Basket Watch. Answer questions about",
-      "the shopping data below.",
+      "You are the assistant inside a grocery-spending app called Basket Watch. Answer questions about the",
+      "shopping data below.",
       state.lang === "he" ? "Answer in Hebrew." : "Answer in English.",
-      "Rules: use only the data given or what the query_lines tool returns — never invent a number. Amounts are",
-      "shekels (₪). Prices per kg/litre/item are already normalised, so they are comparable across stores and",
-      "pack sizes. Some receipts are synthetic demo data and are marked as such — say so if it matters to the",
-      "answer. Be brief: a couple of sentences or a short list, with the numbers that back it up. If the data",
-      "cannot answer the question, say what is missing.",
+      "Rules: use only the data given — never invent a number. Amounts are shekels (₪). Prices per kg/litre/item",
+      "are already normalised, so they are comparable across stores and pack sizes. Be brief: a couple of",
+      "sentences or a short list, with the numbers that back it up. If the data cannot answer the question, say",
+      "what is missing and what to scan to get it.",
       "",
       askContext(),
     ].join("\n");
-  }
-  function askTools() {
-    if (!CAP.tools) return undefined;
-    return [{
-      name: "query_lines",
-      description: "Filter the receipt line items and return the matching total, count and the biggest lines. " +
-        "Use it for any question about a specific period, store, category or product. Returns JSON.",
-      inputSchema: {
-        type: "object",
-        properties: {
-          from: { type: "string", description: "earliest date, YYYY-MM-DD" },
-          to: { type: "string", description: "latest date, YYYY-MM-DD" },
-          store: { type: "string", description: "merchant slug" },
-          category: { type: "string", description: "one category key" },
-          text: { type: "string", description: "substring of the product name, Hebrew or English" },
-          include_demo: { type: "boolean", description: "include synthetic demo receipts (default true)" },
-        },
-      },
-      execute(input) {
-        const q = String(input.text || "").toLowerCase();
-        const hit = allRows().filter((r) =>
-          (input.include_demo === false ? !r.demo : true) &&
-          (!input.from || r.date >= String(input.from)) && (!input.to || r.date <= String(input.to)) &&
-          (!input.store || r.merchant_slug === String(input.store)) &&
-          (!input.category || r.category === String(input.category)) &&
-          (!q || r.name.toLowerCase().includes(q) || (r.name_en || "").toLowerCase().includes(q)));
-        return {
-          lines: hit.length,
-          total: Math.round(sum(hit, (r) => r.total) * 100) / 100,
-          by_store: [...groupBy(hit, (r) => r.merchant_slug).entries()].map(([s, rs]) => ({ store: storeName(s), total: Math.round(sum(rs, (r) => r.total) * 100) / 100 })),
-          top: [...hit].sort((a, b) => b.total - a.total).slice(0, 15).map((r) => ({
-            date: r.date, name: r.name, en: r.name_en, store: r.merchant_name,
-            qty: r.quantity, unit: r.unit, paid: r.total, per_base: r.base_price + "/" + r.base_unit, demo: r.demo,
-          })),
-        };
-      },
-    }];
   }
   let askTurns = [], askCtl = null;
   function bubble(who, text, cls) {
@@ -1305,7 +1553,7 @@
     return d.querySelector(".body");
   }
   async function ask(question) {
-    if (!question.trim() || !CAP.sample) return;
+    if (!question.trim() || AI.mode === "none") return;
     $("ask-input").value = "";
     bubble(t("you"), question, "me");
     const out = bubble(t("claude"), t("ask_thinking"), "ai");
@@ -1314,18 +1562,16 @@
     $("ask-stop").hidden = false;
     askCtl = new AbortController();
     try {
-      const opts = {
-        signal: askCtl.signal, cache: false,
-        onText: ({ text }) => { out.textContent = text; },
-      };
-      const tools = askTools();
-      if (tools) { opts.tools = tools; delete opts.cache; }   // tools and cache cannot both be passed
-      const { text } = await CAP.sample([{ role: "user", content: askRules() }, ...askTurns], opts);
+      const text = await AI.askText([{ role: "user", content: askRules() }].concat(askTurns), {
+        signal: askCtl.signal,
+        onText: (u) => { out.textContent = u.text; },
+      });
+      out.textContent = text;
       askTurns.push({ role: "assistant", content: text });
       if (askTurns.length > 8) askTurns = askTurns.slice(-8);
     } catch (e) {
-      if (e && e.code === "cancelled") { out.textContent = e.text || ""; }
-      else { out.textContent = (e && e.text) || t("ask_failed", { m: (e && e.code) || "error" }); }
+      if (e && e.code === "cancelled") out.textContent = e.text || "";
+      else out.textContent = (e && e.text) || t("ask_failed", { m: (e && (e.message || e.code)) || "error" });
       askTurns.pop();
     } finally {
       $("ask-send").disabled = false;
@@ -1334,10 +1580,9 @@
     }
   }
 
-  /* ======================= language, controls, tabs ======================= */
+  /* ========================= language, controls, tabs ========================= */
   const STATIC = {
-    "brand-name": "brand", "tab-dash": "tab_dash", "tab-scan": "tab_scan", "tab-ask": "tab_ask",
-    "f-demo-label": "demo_switch", "demo-pill": "demo_pill",
+    "brand-name": "brand", "hero-label": "hero_label",
     "h-months": "h_months", "s-months": "s_months", "h-cats": "h_cats", "s-cats": "s_cats",
     "h-index": "h_index", "s-index": "s_index", "hint-index": "hint_index",
     "h-stores": "h_stores", "s-stores": "s_stores", "hint-stores": "hint_stores",
@@ -1345,16 +1590,23 @@
     "h-movers": "h_movers", "s-movers": "s_movers", "hint-movers": "hint_movers",
     "h-receipts": "h_receipts", "s-receipts": "s_receipts",
     "h-lines": "h_lines", "s-lines": "s_lines",
-    "h-scan": "h_scan", "s-scan": "s_scan", "drop-title": "drop_title", "drop-sub": "drop_sub", "pick": "pick",
+    "h-scan": "h_scan", "s-scan": "s_scan", "drop-title": "drop_title", "drop-sub": "drop_sub",
+    "take": "take", "pick": "pick",
+    "settings-title": "settings_title", "key-label": "key_label", "key-help": "key_help",
+    "key-save": "key_save", "key-clear": "key_clear",
     "h-saved": "h_saved", "s-saved": "s_saved",
     "h-ask": "h_ask", "s-ask": "s_ask", "ask-send": "ask_send", "ask-stop": "ask_stop", "ask-note": "ask_note",
     "foot-text": "foot",
   };
   function applyLang() {
-    const l = L();
     document.documentElement.lang = state.lang;
-    document.documentElement.dir = l.dir;
+    document.documentElement.dir = L().dir;
     Object.keys(STATIC).forEach((id) => { const el = $(id); if (el) el.textContent = t(STATIC[id]); });
+    document.querySelectorAll("[data-label]").forEach((el) => { el.textContent = t(el.dataset.label); });
+    document.querySelectorAll("[data-tab]").forEach((b) => { 
+      const span = b.querySelector("[data-label]");
+      if (!span) b.textContent = t("tab_" + b.dataset.tab);
+    });
     $("f-q").placeholder = t("search_ph");
     $("ask-input").placeholder = t("ask_ph");
     $("lang-he").setAttribute("aria-pressed", String(state.lang === "he"));
@@ -1362,15 +1614,16 @@
     $("built").textContent = DATA.meta.generated_at ? t("built", { d: DATA.meta.generated_at.replace("T", " ").slice(0, 16) }) : "";
     fillControls();
     fillSuggestions();
-    if (CAP.ready) paintCapStates();
+    paintEngine();
   }
   function option(v, label, sel) { return '<option value="' + esc(v) + '"' + (sel ? " selected" : "") + ">" + esc(label) + "</option>"; }
   function fillControls() {
     $("f-period").innerHTML = [option("all", t("all_time"), state.period === "all")]
-      .concat([3, 6, 12].map((n) => option(String(n), t("last_n", { n }), state.period === String(n)))).join("");
+      .concat([3, 6, 12].map((n) => option(String(n), t("last_n", { n: n }), state.period === String(n)))).join("");
     const stores = [...new Set(allRows().map((r) => r.merchant_slug))].sort();
     $("f-store").innerHTML = option("all", t("all_stores"), state.store === "all") +
       stores.map((s) => option(s, storeName(s), state.store === s)).join("");
+    $("f-store").hidden = stores.length < 2;
     const cats = [...new Set(allRows().map((r) => r.category))].sort();
     $("f-cat").innerHTML = option("all", t("all_cats"), state.cat === "all") +
       cats.map((c) => option(c, catLabel(c), state.cat === c)).join("");
@@ -1380,30 +1633,42 @@
     rate.placeholder = t("rate_ph");
     rate.title = t("rate_title", { c: state.currency });
     rate.value = state.rate || "";
-    $("f-demo").checked = state.demo;
-    const demoLabel = $("f-demo").closest("label");
-    if (demoLabel) demoLabel.hidden = !DATA.meta.demo_receipts;
   }
   function fillSuggestions() {
     $("ask-suggest").innerHTML = ["s1", "s2", "s3", "s4"]
       .map((k) => '<button type="button" data-q="' + esc(t(k)) + '">' + esc(t(k)) + "</button>").join("");
     $("ask-suggest").querySelectorAll("[data-q]").forEach((b) => { b.onclick = () => ask(b.dataset.q); });
   }
+  /** Show which route to Claude is live, and unlock or explain the two screens. */
+  function paintEngine() {
+    const mode = AI.refresh();
+    const label = mode === "sample" ? t("engine_sample") : mode === "key" ? t("engine_native") : t("engine_none");
+    $("scan-engine").textContent = label;
+    $("ask-engine").textContent = label;
+    const on = mode !== "none";
+    $("scan-ui").hidden = !on;
+    $("scan-blocked").hidden = on;
+    if (!on) $("scan-blocked").innerHTML = EMPTY_ICON + "<strong>" + esc(t("blocked_t")) + "</strong><span>" + esc(t("blocked_d")) + "</span>";
+    $("ask-ui").hidden = !on;
+    $("ask-blocked").hidden = on;
+    if (!on) $("ask-blocked").innerHTML = EMPTY_ICON + "<strong>" + esc(t("ask_blocked_t")) + "</strong><span>" + esc(t("ask_blocked_d")) + "</span>";
+    // The key only matters where the artifact runtime is absent.
+    $("settings").hidden = mode === "sample";
+    $("key-state").textContent = AI.hasKey() ? t("key_set") : t("key_none");
+    if (AI.imageLimits && AI.imageLimits.mediaTypes) {
+      $("file").accept = AI.imageLimits.mediaTypes.join(",");
+    }
+  }
   function setTab(tab) {
     state.tab = ["dash", "scan", "ask"].includes(tab) ? tab : "dash";
     store.set("tab", state.tab);
-    ["dash", "scan", "ask"].forEach((n) => {
-      $("view-" + n).hidden = n !== state.tab;
-      $("tab-" + n).setAttribute("aria-selected", String(n === state.tab));
-    });
+    ["dash", "scan", "ask"].forEach((n) => { $("view-" + n).hidden = n !== state.tab; });
+    document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === state.tab)));
+    scrollTo({ top: 0, behavior: "instant" });
     renderCurrent();
   }
   function renderCurrent() {
-    const showBand = state.tab === "dash" && state.demo && !!DATA.meta.demo_receipts;
-    $("demo-band").hidden = !showBand;
-    if (showBand) {
-      $("demo-band-text").textContent = t("demo_text", { n: DATA.meta.demo_receipts, r: DATA.meta.real_receipts + scanned.length });
-    }
+    assignStoreColours();
     if (state.tab === "dash") renderDash();
     else if (state.tab === "scan") renderSaved();
   }
@@ -1417,22 +1682,19 @@
     };
     $("f-rate").oninput = (e) => {
       const v = Number(e.target.value);
-      state.rate = v > 0 ? v : null;
-      store.set("rate", state.rate);
-      renderCurrent();
+      state.rate = v > 0 ? v : null; store.set("rate", state.rate); renderCurrent();
     };
-    $("tab-dash").onclick = () => setTab("dash");
-    $("tab-scan").onclick = () => setTab("scan");
-    $("tab-ask").onclick = () => setTab("ask");
-    $("f-demo").onchange = (e) => { state.demo = e.target.checked; renderCurrent(); };
+    document.querySelectorAll("[data-tab]").forEach((b) => { b.onclick = () => setTab(b.dataset.tab); });
     $("f-period").onchange = (e) => { state.period = e.target.value; renderCurrent(); };
     $("f-store").onchange = (e) => { state.store = e.target.value; renderCurrent(); };
     $("f-cat").onchange = (e) => { state.cat = e.target.value; renderCurrent(); };
     let qt;
     $("f-q").oninput = (e) => { clearTimeout(qt); qt = setTimeout(() => { state.q = e.target.value; renderCurrent(); }, 140); };
 
+    $("take").onclick = () => $("file-camera").click();
     $("pick").onclick = () => $("file").click();
     $("file").onchange = (e) => pickFile(e.target.files && e.target.files[0]);
+    $("file-camera").onchange = (e) => pickFile(e.target.files && e.target.files[0]);
     const drop = $("drop");
     ["dragenter", "dragover"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
     ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
@@ -1440,6 +1702,15 @@
       const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
       if (f) pickFile(f);
     });
+
+    $("key-save").onclick = () => {
+      const v = $("apikey").value.trim();
+      if (v && !/^sk-ant-/.test(v)) { $("key-state").textContent = t("key_bad"); return; }
+      store.set("apikey", v);
+      $("apikey").value = "";
+      paintEngine();
+    };
+    $("key-clear").onclick = () => { store.del("apikey"); $("apikey").value = ""; paintEngine(); };
 
     $("ask-form").onsubmit = (e) => { e.preventDefault(); ask($("ask-input").value); };
     $("ask-input").onkeydown = (e) => {
@@ -1452,10 +1723,10 @@
     matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderCurrent);
   }
 
-  assignStoreColours();
   wire();
   applyLang();
   setTab(store.get("tab", "dash"));
-  initCaps();
+  AI.init().then(() => { paintEngine(); });
+  Receipts.init(() => { fillControls(); renderCurrent(); });
 })();
 </script>

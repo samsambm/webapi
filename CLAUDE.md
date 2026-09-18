@@ -17,9 +17,15 @@ Bill scanning → receipt JSON → spending dashboard. See README.md for the sha
   (`margin-inline`, `text-align: start`) so the Hebrew layout keeps mirroring.
 - **Never invent an exchange rate.** Amounts are recorded in shekels; another currency is
   shown only once the viewer supplies a rate.
-- The scan and ask screens need Artifact runtime capabilities (`sample`, `db`, `assets`,
-  `downloads`), so they only work in the published artifact. They must degrade to a clear
-  note when `window.claude` is absent — `dashboard/index.html` has to stay useful offline.
+- **Reaching Claude has three routes**, picked in `AI.init()`: the artifact runtime
+  (`sample`), the device's own API key (through the Android native bridge, else `fetch`),
+  or none — in which case the Scan and Ask screens must say so rather than break. The
+  dashboard itself never needs Claude and has to stay useful offline.
+- An API key belongs in `localStorage` on the device and nowhere else: never in the repo,
+  never compiled into the APK, never logged.
+- **Charts must carry `direction="ltr"` on the `<svg>`.** SVG `text-anchor` resolves
+  against the inline base direction, so under `dir="rtl"` an "end" anchor flips to the
+  left and throws every mirrored label off the chart.
 - `flattenReceipt`/`basePrice`/`baseQty` in the template mirror `scripts/receipts.py`. If
   you change the normalisation in one, change it in the other or the two disagree.
 - Python is stdlib-only by design; `jsonschema` is used if present but never required. Keep
