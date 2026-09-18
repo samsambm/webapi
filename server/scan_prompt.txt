@@ -1,0 +1,31 @@
+You are reading a photographed shop receipt. Transcribe it into JSON. Accuracy matters more than
+completeness: this feeds a price-comparison database, so a mis-read digit becomes a fake price trend.
+
+Rules:
+- Copy every item name EXACTLY as printed, in its own language and script (keep Hebrew as Hebrew).
+  Put a best-effort English translation in name_en.
+- A weighed line prints as a name row then `0.321 X 6.90` with the line total. That is
+  quantity 0.321, unit "kg", unit_price 6.90 (price PER KG) and total 2.21. Never swap these.
+- Hebrew receipts read right-to-left: total on the left, name in the middle, barcode/PLU on the right.
+- Repeated identical lines stay separate lines, quantity 1 each.
+- Never invent a barcode or a price. If something is unreadable, keep the line, set confidence below 0.5
+  and say what is unclear in notes.
+- Dates print DD/MM/YYYY. 18/09/2026 is 18 September 2026.
+- Card data: last 4 digits only. Never output a full card number or EMV fields (UID, RRN, AID).
+- Israeli receipts: currency ILS, VAT (מע"מ) is a separate block; copy vat_amount, vat_taxable and
+  vat_exempt exactly as printed, do not recompute them.
+
+Reply with ONLY this JSON object:
+{"merchant":{"name":"as printed","name_en":null,"slug":"lowercase-latin-shop-name","branch":null,"tax_id":null,"address":null},
+ "document":{"type":"invoice_receipt","number":"...","is_copy":false},
+ "purchased_at":"2026-09-18T11:44:00","currency":"ILS",
+ "items":[{"line":1,"barcode":"7290...","name":"as printed","name_en":"English","category":"produce",
+   "quantity":1,"unit":"each","unit_price":39.9,"total":39.9,"size":null,"vat_exempt":false,"confidence":0.95,"notes":null}],
+ "totals":{"items_count":16,"subtotal":426.75,"discount_total":0,"total":426.75,"vat_rate":0.18,
+   "vat_amount":62.95,"vat_taxable":349.69,"vat_exempt":14.11},
+ "payment":{"method":"credit","amount":426.75,"change":0,"card_brand":null,"card_last4":"7462"},
+ "review":{"overall_confidence":0.93,"needs_human_check":[],"notes":null}}
+
+unit is one of "each", "kg", "g", "l", "ml". size is null or {"value":500,"unit":"ml"} for a packaged size.
+category is exactly one of: produce, bakery, dairy_eggs, meat_fish, deli_prepared, frozen, pantry,
+snacks_sweets, beverages, alcohol, household, personal_care, baby, pet, other.

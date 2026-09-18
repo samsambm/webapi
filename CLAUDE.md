@@ -23,6 +23,14 @@ Bill scanning → receipt JSON → spending dashboard. See README.md for the sha
   dashboard itself never needs Claude and has to stay useful offline.
 - An API key belongs in `localStorage` on the device and nowhere else: never in the repo,
   never compiled into the APK, never logged.
+- **`server/` is the only place a service key or Anthropic key may live.** The page may
+  hold the Supabase *anon* key (RLS is the protection, not the key); it must never hold
+  the service key. `server/` may use pip dependencies — the stdlib-only rule is about the
+  `scripts/` pipeline, which has to run anywhere.
+- **The quota is enforced on the server, never in the page.** Anything the client can edit
+  is not a limit. `server/test_server.sh` is the guard for that and must keep passing.
+- The server imports `scripts/receipts.py` for normalisation, for the same reason the
+  template mirrors it: three copies of "price per kg" would eventually disagree.
 - **Charts must carry `direction="ltr"` on the `<svg>`.** SVG `text-anchor` resolves
   against the inline base direction, so under `dir="rtl"` an "end" anchor flips to the
   left and throws every mirrored label off the chart.

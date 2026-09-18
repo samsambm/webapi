@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -63,6 +64,13 @@ def build_payload(loaded: rc.LoadResult) -> dict:
         "meta": {
             "generated_at": datetime.now().isoformat(timespec="seconds"),
             "currency": (loaded.receipts[0].get("currency") if loaded.receipts else "ILS"),
+            # Public configuration only. The anon key is designed to be shipped;
+            # the service key and the Anthropic key live on the server alone.
+            "cloud": {
+                "api_url": os.environ.get("BW_API_URL", "").rstrip("/"),
+                "supabase_url": os.environ.get("BW_SUPABASE_URL", "").rstrip("/"),
+                "supabase_anon_key": os.environ.get("BW_SUPABASE_ANON_KEY", ""),
+            },
             "category_labels": rc.CATEGORY_LABELS,
             "category_labels_he": rc.CATEGORY_LABELS_HE,
             "receipt_count": len(loaded.receipts),

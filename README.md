@@ -131,6 +131,24 @@ Scanning and Ask work in the APK once you add an Anthropic API key under Setting
 Scan tab. The receipt data compiled into the APK is a build-time snapshot; anything you
 scan on the phone is stored on the phone.
 
+## Accounts, quotas and payment
+
+`server/` and `db/` are the product version: sign-in, receipts in Postgres, scanning
+through a server that holds the API key, and a free/paid quota enforced there rather
+than in the app. It is off unless the build is given a server to talk to, which is how
+this repository is committed. See `server/README.md` to switch it on.
+
+```
+phone ──scan──►  your server  ──►  api.anthropic.com
+  │                    └────────►  Supabase (writes the rows)
+  └──everything else────────────►  Supabase (RLS: only your own rows)
+```
+
+The receipt photo is read and discarded — only the numbers are stored. Alongside each
+user's private rows there is one anonymous table, `price_points`, holding what a product
+cost at a shop on a day with no link to a person: the part that gets more useful the more
+people use the app.
+
 ## Running this as a product
 
 Worth knowing before this goes to real customers, because it changes who pays for
