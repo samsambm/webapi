@@ -348,9 +348,8 @@
       <div class="card-head"><h2 id="h-scan"></h2><span class="hint" id="scan-engine"></span></div>
       <p class="sub" id="s-scan"></p>
 
-      <div id="scan-blocked" class="empty" hidden></div>
-
-      <div id="scan-ui" hidden>
+      <div id="scan-ui">
+        <div id="scan-blocked" hidden></div>
         <div class="drop" id="drop">
           <span class="ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -565,9 +564,8 @@
       engine_sample: "via Claude in this page", engine_native: "via your API key",
       engine_cloud: "via your account", engine_none: "not set up",
       noimg_t: "This view will not pass a photo to Claude",
-      noimg_d: "Text works here, photos do not — it is the viewer, not the receipt. Opening this same link in the Claude app usually fixes it and costs nothing beyond your subscription. Otherwise paste an API key here, or try anyway if you think this view can manage it.",
+      noimg_d: "This viewer says it will not pass a photo to Claude. Press the camera anyway — it may still work. If it does not: open this same link in the Claude app, which costs nothing beyond your subscription, or paste an API key here.",
       noimg_confirmed: "This viewer really will not send the photo. Open the link in the Claude app, or paste an API key.",
-      try_anyway: "Try anyway",
       blocked_t: "Scanning needs Claude", 
       blocked_d: "In this app, add your own Anthropic API key below and scanning works. Opened as a published artifact instead, it runs on your Claude account with no key at all.",
       settings_title: "Settings — Anthropic API key",
@@ -673,9 +671,8 @@
       engine_sample: "דרך קלוד בדף הזה", engine_native: "דרך מפתח ה-API שלך",
       engine_cloud: "דרך החשבון שלך", engine_none: "לא מוגדר",
       noimg_t: "התצוגה הזו לא מעבירה תמונה לקלוד",
-      noimg_d: "טקסט עובד כאן, תמונות לא — זו התצוגה, לא החשבונית. פתיחת אותו קישור באפליקציית קלוד בדרך כלל פותרת את זה ולא עולה מעבר למנוי שלך. אחרת אפשר להדביק כאן מפתח API, או פשוט לנסות בכל זאת.",
+      noimg_d: "התצוגה הזו מדווחת שהיא לא מעבירה תמונה לקלוד. לחץ על צלם בכל זאת — יכול להיות שזה יעבוד. אם לא: פתח את אותו קישור באפליקציית קלוד, שלא עולה מעבר למנוי שלך, או הדבק כאן מפתח API.",
       noimg_confirmed: "התצוגה הזו באמת לא שולחת את התמונה. פתח את הקישור באפליקציית קלוד, או הדבק מפתח API.",
-      try_anyway: "נסה בכל זאת",
       blocked_t: "לסריקה נדרש קלוד",
       blocked_d: "באפליקציה הזו — הוסף מפתח Anthropic API למטה והסריקה תעבוד. בארטיפקט המפורסם היא רצה על חשבון הקלוד שלך בלי מפתח בכלל.",
       settings_title: "הגדרות — מפתח Anthropic API",
@@ -880,9 +877,8 @@
     /* A viewer can be able to ask Claude but not to send it a photo — the
        artifact runtime reports that separately, and a mobile browser view is
        exactly the case. Gate the two screens on the right one. */
-    forceImages: false,
     imageMode() {
-      if (this.sample && (this.imageLimits || this.forceImages)) return "sample";
+      if (this.sample && this.imageLimits) return "sample";
       return this.hasKey() ? "key" : "none";
     },
     textMode() { return this.sample ? "sample" : (this.hasKey() ? "key" : "none"); },
@@ -1711,6 +1707,16 @@
   }
   async function runScan() {
     if (!scanFiles.length) return;
+    if (!Cloud.signedIn() && AI.imageMode() === "none") {
+      // Nothing to send it to — but the attempt was allowed, so answer it.
+      $("scan-stage").hidden = false;
+      $("scan-img").src = URL.createObjectURL(scanFiles[0]);
+      status($("scan-status"), "", false);
+      $("scan-result").innerHTML = '<div class="notice notice-warn">' +
+        esc(t(!!AI.sample && !AI.imageLimits ? "noimg_d" : "blocked_d")) + "</div>";
+      $("scan-actions").innerHTML = "";
+      return;
+    }
     $("scan-stage").hidden = false;
     $("scan-img").src = URL.createObjectURL(scanFiles[0]);
     $("scan-result").innerHTML = "";
@@ -1759,7 +1765,7 @@
       $("scan-result").innerHTML = '<div class="notice notice-bad">' +
         esc(imageless ? t("noimg_confirmed") : t("scan_failed", { m: (e && (e.message || e.code)) || "error" })) + "</div>";
       $("scan-actions").innerHTML = "";
-      if (imageless) { AI.forceImages = false; $("scan-stage").hidden = true; paintEngine(); }
+      if (imageless) paintEngine();
     }
   }
   function normaliseScan(p) {
@@ -2008,21 +2014,18 @@
     $("scan-engine").textContent = t(ENGINE_LABEL[imageMode]);
     $("ask-engine").textContent = t(ENGINE_LABEL[textMode]);
 
+    // The camera is always offered. Hiding it reads as the feature being gone,
+    // and the detection can be wrong — better to try and explain a failure.
     const canScan = imageMode !== "none";
-    $("scan-ui").hidden = !canScan;
     $("scan-blocked").hidden = canScan;
     if (!canScan) {
-      // Two different cases, and in both the panel has to offer a way out
-      // rather than just name the problem.
       const noImages = !!AI.sample && !AI.imageLimits;
-      $("scan-blocked").innerHTML = EMPTY_ICON +
-        "<strong>" + esc(t(noImages ? "noimg_t" : "blocked_t")) + "</strong>" +
-        "<span>" + esc(t(noImages ? "noimg_d" : "blocked_d")) + "</span>" +
-        '<div class="key-row" style="margin-top:16px; justify-content:center">' +
+      $("scan-blocked").innerHTML =
+        '<div class="notice notice-warn">' + esc(t(noImages ? "noimg_d" : "blocked_d")) +
+        '<div class="key-row" style="margin-top:11px">' +
         '<input type="password" id="quick-key" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">' +
         '<button type="button" class="btn btn-primary" id="quick-save">' + esc(t("key_save")) + "</button>" +
-        (noImages ? '<button type="button" class="btn" id="quick-try">' + esc(t("try_anyway")) + "</button>" : "") +
-        "</div>";
+        "</div></div>";
       const save = $("quick-save");
       if (save) save.onclick = () => {
         const v = $("quick-key").value.trim();
@@ -2030,8 +2033,6 @@
         store.set("apikey", v);
         paintEngine();
       };
-      const tryIt = $("quick-try");
-      if (tryIt) tryIt.onclick = () => { AI.forceImages = true; paintEngine(); };
     }
 
     const canAsk = textMode !== "none";
