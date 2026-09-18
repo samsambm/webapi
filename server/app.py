@@ -22,6 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
+from typing import List, Optional
+
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -44,6 +46,9 @@ MODEL = os.environ.get("SCAN_MODEL", "claude-sonnet-5")
 FREE_SCANS = int(os.environ.get("FREE_SCANS_PER_MONTH", "5"))
 PRO_SCANS = int(os.environ.get("PRO_SCANS_PER_MONTH", "1000"))  # a ceiling against runaway use, not a product limit
 MAX_IMAGE_BYTES = int(os.environ.get("MAX_IMAGE_BYTES", str(8 * 1024 * 1024)))
+# A long receipt arrives as several overlapping strips of one bill, because the
+# model downsizes every photo and a metre of paper in one frame is unreadable.
+MAX_IMAGES = int(os.environ.get("MAX_IMAGES_PER_SCAN", "8"))
 ALLOWED_ORIGINS = [o for o in os.environ.get("ALLOWED_ORIGINS", "*").split(",") if o]
 
 # $ per million tokens, so a scan's real cost lands in the telemetry.
@@ -64,6 +69,14 @@ app.add_middleware(
 _dev_state: dict = {"profiles": {}, "scans": [], "receipts": []}
 
 SCAN_PROMPT = (Path(__file__).resolve().parent / "scan_prompt.txt").read_text(encoding="utf-8")
+MULTI_NOTE = """
+THESE PHOTOS ARE ONE RECEIPT, in order from its top to its bottom. Consecutive photos
+OVERLAP, so some lines appear twice - list every purchased line exactly ONCE, in the order
+they are printed. Do not restart the line numbering per photo.
+The receipt prints how many items it has and what the total is: read both from the last
+photo, put them in totals, and if your line count or line sum does not match them, say so
+in review.notes rather than adjusting a line to fit.
+"""
 
 
 # ------------------------------------------------------------------ helpers
@@ -139,24 +152,20 @@ async def record_scan(user_id: str, ok: bool, usage: dict | None = None, error: 
 
 
 # -------------------------------------------------------------------- claude
-async def read_receipt(image: bytes, media_type: str) -> tuple[dict, dict]:
-    """Ask Claude to transcribe the photo. Returns (receipt, token usage)."""
+async def read_receipt(images: list[tuple[bytes, str]]) -> tuple[dict, dict]:
+    """Ask Claude to transcribe one receipt, given one photo or several strips of it."""
     if DEV:
         canned = json.loads((Path(__file__).resolve().parent / "dev_receipt.json").read_text(encoding="utf-8"))
-        return canned, {"input_tokens": 2500, "output_tokens": 3000}
+        return canned, {"input_tokens": 2500 * len(images), "output_tokens": 3000}
 
-    body = {
-        "model": MODEL,
-        "max_tokens": 16000,
-        "messages": [{
-            "role": "user",
-            "content": [
-                {"type": "image", "source": {"type": "base64", "media_type": media_type,
-                                             "data": base64.b64encode(image).decode("ascii")}},
-                {"type": "text", "text": SCAN_PROMPT},
-            ],
-        }],
-    }
+    prompt = SCAN_PROMPT + (MULTI_NOTE if len(images) > 1 else "")
+    content = [
+        {"type": "image", "source": {"type": "base64", "media_type": media_type,
+                                     "data": base64.b64encode(blob).decode("ascii")}}
+        for blob, media_type in images
+    ]
+    content.append({"type": "text", "text": prompt})
+    body = {"model": MODEL, "max_tokens": 16000, "messages": [{"role": "user", "content": content}]}
     async with httpx.AsyncClient(timeout=300) as client:
         res = await client.post(
             "https://api.anthropic.com/v1/messages",
@@ -234,7 +243,8 @@ async def me(authorization: str | None = Header(default=None)):
 @app.post("/scan")
 async def scan(
     authorization: str | None = Header(default=None),
-    image: UploadFile = File(...),
+    images: Optional[List[UploadFile]] = File(default=None),
+    image: Optional[UploadFile] = File(default=None),
     save: str = Form(default="1"),
 ):
     user = current_user(authorization)
@@ -248,21 +258,30 @@ async def scan(
                     "checkout_url": CHECKOUT_URL or None},
         )
 
-    blob = await image.read()
-    if not blob:
+    uploads = [u for u in (images or []) if u is not None] or ([image] if image else [])
+    if not uploads:
         raise HTTPException(status_code=400, detail="no image was uploaded")
-    if len(blob) > MAX_IMAGE_BYTES:
-        raise HTTPException(status_code=413, detail="that image is too large — resize it on the device first")
-    media_type = image.content_type or "image/jpeg"
-    if not media_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="that file is not an image")
+    if len(uploads) > MAX_IMAGES:
+        raise HTTPException(status_code=400, detail=f"at most {MAX_IMAGES} photos of one receipt")
+
+    payload: list[tuple[bytes, str]] = []
+    for upload in uploads:
+        blob = await upload.read()
+        if not blob:
+            raise HTTPException(status_code=400, detail="one of the photos was empty")
+        if len(blob) > MAX_IMAGE_BYTES:
+            raise HTTPException(status_code=413, detail="that image is too large — resize it on the device first")
+        media_type = upload.content_type or "image/jpeg"
+        if not media_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="that file is not an image")
+        payload.append((blob, media_type))
 
     try:
-        receipt, usage = await read_receipt(blob, media_type)
+        receipt, usage = await read_receipt(payload)
     except HTTPException as exc:
         await record_scan(user["id"], ok=False, error=str(exc.detail)[:200])
         raise
-    # The photo is never written anywhere: `blob` goes out of scope here.
+    # The photos are never written anywhere: `payload` goes out of scope here.
 
     problems = check_arithmetic(receipt)
     await record_scan(user["id"], ok=True, usage=usage)

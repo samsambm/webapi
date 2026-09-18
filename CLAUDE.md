@@ -15,6 +15,12 @@ Bill scanning → receipt JSON → spending dashboard. See README.md for the sha
   of UI text goes through `t()` and lives in the `I18N` table in `dashboard/template.html`
   — add both `en` and `he` when you add a string, and use CSS logical properties
   (`margin-inline`, `text-align: start`) so the Hebrew layout keeps mirroring.
+- **A long receipt is several images, not one.** Every photo is downsized to about 1.2
+  megapixels before the model sees it, so a metre of paper in one frame leaves a couple of
+  pixels per letter. `sliceTall()` cuts a tall photo into overlapping strips and the scan
+  sends them as one request with `MULTI_NOTE` appended, which tells the model the strips
+  overlap and each line must be listed once. Keep the overlap: without it a line falls
+  between two strips and disappears silently.
 - **Never invent an exchange rate.** Amounts are recorded in shekels; another currency is
   shown only once the viewer supplies a rate.
 - **Reaching Claude has three routes**, picked in `AI.init()`: the artifact runtime

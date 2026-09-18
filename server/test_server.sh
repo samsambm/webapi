@@ -30,6 +30,12 @@ curl -sf -X POST "http://127.0.0.1:$PORT/billing/webhook" -H "content-type: appl
   -d '{"email":"dev@example.com","plan":"pro","status":"active"}' >/dev/null || fail "the upgrade webhook failed"
 [ "$(scan)" = 200 ] || fail "a paid user was still blocked"
 
+# a long receipt arrives as several strips in one request
+multi() { curl -s -o /dev/null -w "%{http_code}" -X POST "http://127.0.0.1:$PORT/scan" \
+           -H "Authorization: Bearer dev" \
+           -F "images=@$IMG;type=image/jpeg" -F "images=@$IMG;type=image/jpeg" -F "images=@$IMG;type=image/jpeg"; }
+[ "$(multi)" = 200 ] || fail "a three-part receipt was refused"
+
 echo "not an image" > /tmp/bw-not-an-image.txt
 [ "$(curl -s -o /dev/null -w '%{http_code}' -X POST "http://127.0.0.1:$PORT/scan" \
      -H "Authorization: Bearer dev" -F "image=@/tmp/bw-not-an-image.txt;type=text/plain")" = 400 ] \

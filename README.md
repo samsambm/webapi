@@ -90,6 +90,22 @@ What it shows:
 | Price movers | Biggest price rises and drops, same product, same store |
 | Every line item | Sortable, searchable; amber rows need a check against the paper |
 
+## Long receipts
+
+A supermarket receipt can be a metre of paper with eighty lines on it. Every photo is
+downsized to about 1.2 megapixels before the model reads it, so photographing all of it
+in one frame leaves a couple of pixels per Hebrew letter — unreadable, however good the
+camera is.
+
+The app cuts a tall photo into overlapping strips and sends them as one request, so each
+strip gets its own 1.2 megapixels: about twice the resolution per letter, or thirteen
+times if the receipt was small in the frame. The model is told the strips overlap and that
+each line must be listed once, and the printed item count and total are the check that
+nothing was dropped or counted twice.
+
+For a receipt too long even for that, photograph it in two or three overlapping parts and
+select them all at once — the app treats them the same way.
+
 ## Asking questions
 
 The *Ask* screen answers questions about your own receipts — "which store is cheapest
