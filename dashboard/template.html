@@ -1205,9 +1205,12 @@
   }
 
   /* ========================= price intelligence ========================= */
+  // A promotion prints as its own line with a negative total ("3 for 50", -6.70).
+  // It is money off the basket, not a product, so it never enters a price comparison.
+  function purchases(rows) { return rows.filter((r) => r.total > 0 && r.base_price > 0); }
   function priceBook(rows) {
     const book = new Map();
-    rows.forEach((r) => {
+    purchases(rows).forEach((r) => {
       if (!book.has(r.product_key)) {
         book.set(r.product_key, { key: r.product_key, name: r.name, name_en: r.name_en, unit: r.base_unit, category: r.category, stores: new Map(), history: [] });
       }
@@ -1222,7 +1225,7 @@
   function overpay(rows, book) {
     let lost = 0;
     const per = new Map();
-    rows.forEach((r) => {
+    purchases(rows).forEach((r) => {
       const p = book.get(r.product_key);
       if (!p || p.stores.size < 2) return;
       let best = null;
@@ -1241,7 +1244,7 @@
     const months = [...new Set(rows.map((r) => r.month))].sort();
     if (months.length < 2) return [];
     const tracked = [];
-    groupBy(rows, (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
+    groupBy(purchases(rows), (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
       const sorted = [...rs].sort((a, b) => a.date.localeCompare(b.date));
       const byMonth = new Map();
       sorted.forEach((r) => byMonth.set(r.month, r.base_price));
@@ -1422,7 +1425,7 @@
     const cats = [...groupBy(rows, (r) => r.category).entries()]
       .map(([c, rs]) => ({ c: c, v: sum(rs, (x) => x.total), n: rs.length })).sort((a, b) => b.v - a.v);
     $("stats").innerHTML = [
-      statTile(t("st_items"), String(rows.length), t("st_items_n", { n: cats.length })),
+      statTile(t("st_items"), String(purchases(rows).length), t("st_items_n", { n: cats.length })),
       statTile(t("st_priciest"), maxLine ? money(maxLine.total) : "—",
         maxLine ? (state.lang === "he" ? maxLine.name : (maxLine.name_en || maxLine.name)) : "—"),
       statTile(t("st_stores"), String(stores.size), [...stores].map(storeName).join(", ") || "—"),
@@ -1518,7 +1521,7 @@
 
   function renderMovers(rows) {
     const el = $("t-movers"), movers = [];
-    groupBy(rows, (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
+    groupBy(purchases(rows), (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
       const sorted = [...rs].sort((a, b) => a.date.localeCompare(b.date));
       const first = sorted[0], last = sorted[sorted.length - 1];
       if (first.date === last.date || !first.base_price) return;
