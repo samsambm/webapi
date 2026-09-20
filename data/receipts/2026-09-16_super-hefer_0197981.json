@@ -47,7 +47,10 @@
       "unit": "each",
       "unit_price": 8.6,
       "total": 8.6,
-      "size": null,
+      "size": {
+        "value": 1.5,
+        "unit": "l"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -79,7 +82,10 @@
       "unit": "each",
       "unit_price": 8.6,
       "total": 8.6,
-      "size": null,
+      "size": {
+        "value": 1.5,
+        "unit": "l"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -111,7 +117,10 @@
       "unit": "each",
       "unit_price": 8.3,
       "total": 8.3,
-      "size": null,
+      "size": {
+        "value": 750,
+        "unit": "g"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -127,7 +136,10 @@
       "unit": "each",
       "unit_price": 4.9,
       "total": 4.9,
-      "size": null,
+      "size": {
+        "value": 80,
+        "unit": "g"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -223,7 +235,10 @@
       "unit": "each",
       "unit_price": 15.9,
       "total": 15.9,
-      "size": null,
+      "size": {
+        "value": 200,
+        "unit": "g"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -239,7 +254,10 @@
       "unit": "each",
       "unit_price": 14.9,
       "total": 14.9,
-      "size": null,
+      "size": {
+        "value": 200,
+        "unit": "g"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -623,7 +641,10 @@
       "unit": "each",
       "unit_price": 10.9,
       "total": 10.9,
-      "size": null,
+      "size": {
+        "value": 200,
+        "unit": "g"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -639,7 +660,10 @@
       "unit": "each",
       "unit_price": 10.9,
       "total": 10.9,
-      "size": null,
+      "size": {
+        "value": 200,
+        "unit": "g"
+      },
       "discount": null,
       "vat_exempt": null,
       "confidence": 0.95,
@@ -1269,6 +1293,6 @@
       "items[69].name",
       "items[70].name"
     ],
-    "notes": "Read from four overlapping photos. 76 printed lines: 70 purchases (81 units, matching the printed \"81 פריטים\") and 6 promotion lines. The lines sum to exactly 1031.07, the printed total. Paid in 3 instalments of 343.69. Eight printed names were not fully legible and are flagged; their prices are certain."
+    "notes": "Read from four overlapping photos. 76 printed lines: 70 purchases (81 units, matching the printed \"81 פריטים\") and 6 promotion lines. The lines sum to exactly 1031.07, the printed total. Paid in 3 instalments of 343.69. Eight printed names were not fully legible and are flagged; their prices are certain. Package sizes are filled in only where the printed line carries the number itself; every other line is left without a size rather than guessed."
   }
 }
