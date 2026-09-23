@@ -544,6 +544,8 @@
       e_overlap_d: "This compares a product's price between stores — it needs the same barcode on bills from two different shops.",
       e_repeat_t: "No repeat purchases yet",
       e_repeat_d: "Buy the same product twice at the same store and its price move shows up here.",
+      e_held_t: "Nothing moved",
+      e_held_d: "{n} products were bought twice at the same store and cost exactly the same both times.",
       e_lines_t: "No lines match", e_lines_d: "Clear the search or widen the period.",
       e_norec_t: "No receipts in range", e_norec_d: "Clear a filter to see them.",
       low_conf: "check against the paper",
@@ -651,6 +653,8 @@
       e_overlap_d: "כאן משווים מחיר של מוצר בין חנויות — צריך אותו ברקוד בחשבוניות משתי חנויות.",
       e_repeat_t: "אין עדיין קניות חוזרות",
       e_repeat_d: "קנה אותו מוצר פעמיים באותה חנות ושינוי המחיר יופיע כאן.",
+      e_held_t: "שום דבר לא זז",
+      e_held_d: "{n} מוצרים נקנו פעמיים באותה חנות ועלו בדיוק אותו דבר בשתי הפעמים.",
       e_lines_t: "אין שורות מתאימות", e_lines_d: "נקה את החיפוש או הרחב את התקופה.",
       e_norec_t: "אין חשבוניות בטווח", e_norec_d: "נקה סינון כדי לראות אותן.",
       low_conf: "בדוק מול החשבונית",
@@ -1212,10 +1216,13 @@
     const book = new Map();
     purchases(rows).forEach((r) => {
       if (!book.has(r.product_key)) {
-        book.set(r.product_key, { key: r.product_key, name: r.name, name_en: r.name_en, unit: r.base_unit, category: r.category, stores: new Map(), history: [] });
+        book.set(r.product_key, { key: r.product_key, name: r.name, name_en: r.name_en, unit: r.base_unit, category: r.category, stores: new Map(), units: new Set(), history: [] });
       }
       const p = book.get(r.product_key);
       p.history.push(r);
+      // One barcode priced per kg on one receipt and per package on another is not one
+      // price series: the gap would be the missing size, not the shelf.
+      p.units.add(r.base_unit);
       const prev = p.stores.get(r.merchant_slug);
       if (!prev || r.date > prev.date) p.stores.set(r.merchant_slug, { date: r.date, price: r.base_price });
     });
@@ -1227,7 +1234,7 @@
     const per = new Map();
     purchases(rows).forEach((r) => {
       const p = book.get(r.product_key);
-      if (!p || p.stores.size < 2) return;
+      if (!p || p.stores.size < 2 || p.units.size > 1) return;
       let best = null;
       p.stores.forEach((v, slug) => { if (!best || v.price < best.price) best = { price: v.price, slug: slug }; });
       if (!best || best.slug === r.merchant_slug) return;
@@ -1246,6 +1253,7 @@
     const tracked = [];
     groupBy(purchases(rows), (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
       const sorted = [...rs].sort((a, b) => a.date.localeCompare(b.date));
+      if (new Set(sorted.map((r) => r.base_unit)).size > 1) return;
       const byMonth = new Map();
       sorted.forEach((r) => byMonth.set(r.month, r.base_price));
       if (byMonth.size < 2 || !sorted[0].base_price) return;
@@ -1271,7 +1279,7 @@
     const stores = [...new Set(rows.map((r) => r.merchant_slug))];
     if (stores.length < 2) return [];
     const shared = [];
-    book.forEach((p) => { if (p.stores.size >= 2) shared.push(p); });
+    book.forEach((p) => { if (p.stores.size >= 2 && p.units.size === 1) shared.push(p); });
     if (!shared.length) return [];
     return stores.map((slug) => {
       let cost = 0, ref = 0, n = 0;
@@ -1493,7 +1501,7 @@
 
   function renderCompare(book, perProduct) {
     const el = $("t-compare");
-    const shared = [...book.values()].filter((p) => p.stores.size >= 2);
+    const shared = [...book.values()].filter((p) => p.stores.size >= 2 && p.units.size === 1);
     $("cmp-hint").textContent = shared.length ? t("products_n", { n: shared.length }) : "";
     if (!shared.length) { emptyState(el, t("e_overlap_t"), t("e_overlap_d")); return; }
     const stores = [...new Set([].concat(...shared.map((p) => [...p.stores.keys()])))].sort();
@@ -1521,14 +1529,24 @@
 
   function renderMovers(rows) {
     const el = $("t-movers"), movers = [];
+    let repeats = 0;
     groupBy(purchases(rows), (r) => r.product_key + "@" + r.merchant_slug).forEach((rs) => {
       const sorted = [...rs].sort((a, b) => a.date.localeCompare(b.date));
       const first = sorted[0], last = sorted[sorted.length - 1];
       if (first.date === last.date || !first.base_price) return;
+      // Same barcode, different sized package on one of the receipts: the two prices
+      // are not on the same basis, so there is no honest percentage to report.
+      if (first.base_unit !== last.base_unit) return;
+      repeats += 1;
       const change = ((last.base_price - first.base_price) / first.base_price) * 100;
       if (Math.abs(change) >= 0.5) movers.push({ first: first, last: last, change: change });
     });
-    if (!movers.length) { emptyState(el, t("e_repeat_t"), t("e_repeat_d")); return; }
+    if (!movers.length) {
+      // "Nothing bought twice yet" and "bought twice, price held" are different facts.
+      if (repeats) emptyState(el, t("e_held_t"), t("e_held_d", { n: repeats }));
+      else emptyState(el, t("e_repeat_t"), t("e_repeat_d"));
+      return;
+    }
     movers.sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
     let h = '<div class="scroll"><table><thead><tr><th>' + esc(t("col_product")) + '</th><th class="n">' + esc(t("col_first")) +
       '</th><th class="n">' + esc(t("col_latest")) + '</th><th class="n">' + esc(t("col_change")) + "</th></tr></thead><tbody>";

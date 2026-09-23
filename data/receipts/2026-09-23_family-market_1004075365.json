@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "2026-09-23_family-market_1004075365",
+  "source_image": null,
+  "scanned_at": "2026-09-23T00:00:00",
+  "merchant": {
+    "name": "י.א. פמילי מרקט בע\"מ",
+    "name_en": "Y.A. Family Market Ltd",
+    "slug": "family-market",
+    "branch": "ניצני עוז",
+    "tax_id": "515847747",
+    "phone": "0546619981",
+    "address": "אזור תעשייה ניצני עוז"
+  },
+  "document": {
+    "type": "invoice_receipt",
+    "number": "1004075365",
+    "is_copy": false,
+    "register": "20000"
+  },
+  "purchased_at": "2026-09-23T18:33:00",
+  "currency": "ILS",
+  "items": [
+    {
+      "line": 1,
+      "barcode": "7290004872021",
+      "name": "קרחון רמזור 80 גר",
+      "name_en": "Ramzor ice lolly 80g",
+      "category": "frozen",
+      "quantity": 1,
+      "unit": "each",
+      "unit_price": 2.5,
+      "total": 2.5,
+      "size": {
+        "value": 80,
+        "unit": "g"
+      },
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": null
+    },
+    {
+      "line": 2,
+      "barcode": "7290004872021",
+      "name": "קרחון רמזור 80 גר",
+      "name_en": "Ramzor ice lolly 80g",
+      "category": "frozen",
+      "quantity": 1,
+      "unit": "each",
+      "unit_price": 2.5,
+      "total": 2.5,
+      "size": {
+        "value": 80,
+        "unit": "g"
+      },
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": null
+    },
+    {
+      "line": 3,
+      "barcode": "7290004872359",
+      "name": "קרחון דובדבן 80 ג",
+      "name_en": "Cherry ice lolly 80g",
+      "category": "frozen",
+      "quantity": 4,
+      "unit": "each",
+      "unit_price": 2.5,
+      "total": 10.0,
+      "size": {
+        "value": 80,
+        "unit": "g"
+      },
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": null
+    },
+    {
+      "line": 4,
+      "barcode": "7290112498915",
+      "name": "מאגדת מיני מגנום",
+      "name_en": "Mini Magnum multipack",
+      "category": "frozen",
+      "quantity": 1,
+      "unit": "each",
+      "unit_price": 34.9,
+      "total": 34.9,
+      "size": null,
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": null
+    },
+    {
+      "line": 5,
+      "barcode": "10312",
+      "name": "מלפפון ישראל",
+      "name_en": "Cucumber, Israel",
+      "category": "produce",
+      "quantity": 0.595,
+      "unit": "kg",
+      "unit_price": 9.9,
+      "total": 5.89,
+      "size": null,
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": "VAT-exempt line — the printed exempt total (5.89) is exactly this line."
+    },
+    {
+      "line": 6,
+      "barcode": "4066600999614",
+      "name": "פאולנר בקבוק זכ'",
+      "name_en": "Paulaner bottle 500ml",
+      "category": "alcohol",
+      "quantity": 1,
+      "unit": "each",
+      "unit_price": 12.9,
+      "total": 12.9,
+      "size": {
+        "value": 500,
+        "unit": "ml"
+      },
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": "The name is truncated by the printer; the size comes from the same barcode on the 18/09 receipt, not from this paper."
+    },
+    {
+      "line": 7,
+      "barcode": "4066600999614",
+      "name": "פאולנר בקבוק זכ'",
+      "name_en": "Paulaner bottle 500ml",
+      "category": "alcohol",
+      "quantity": 1,
+      "unit": "each",
+      "unit_price": 12.9,
+      "total": 12.9,
+      "size": {
+        "value": 500,
+        "unit": "ml"
+      },
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.96,
+      "notes": "The name is truncated by the printer; the size comes from the same barcode on the 18/09 receipt, not from this paper."
+    },
+    {
+      "line": 8,
+      "barcode": "100001",
+      "name": "בורקסים/מאפים",
+      "name_en": "Borekas / pastries",
+      "category": "bakery",
+      "quantity": 0.17,
+      "unit": "kg",
+      "unit_price": 55.9,
+      "total": 9.5,
+      "size": null,
+      "discount": null,
+      "vat_exempt": null,
+      "confidence": 0.9,
+      "notes": "Weighed line; the ק\"ג label sits outside the frame, but 0.17 X 55.90 = 9.50 matches the weighed format."
+    }
+  ],
+  "totals": {
+    "items_count": 8,
+    "subtotal": 91.09,
+    "discount_total": 0,
+    "total": 91.09,
+    "vat_rate": 0.18,
+    "vat_amount": 13.0,
+    "vat_taxable": 72.2,
+    "vat_exempt": 5.89
+  },
+  "payment": {
+    "method": "credit",
+    "amount": 91.09,
+    "change": 0,
+    "card_brand": "ויזה כאל",
+    "card_last4": "7462",
+    "terminal": "2656917",
+    "auth_code": "677013"
+  },
+  "review": {
+    "overall_confidence": 0.95,
+    "needs_human_check": [],
+    "notes": "Marked *מקור* (original). 8 printed lines, 11 units as printed, summing to exactly 91.09. The shop's name line is above the top of the photo; the ח.פ (515847747), phone and terminal match the 18/09 receipt, so it is recorded as the same merchant. \"20000\" is the customer code printed as לקוח כללי ניצני עוז (20000), not a till number. The EMV block (UID/RRN/ATC/TVR/AID) was deliberately not recorded."
+  }
+}
